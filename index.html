@@ -1,0 +1,933 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>PUPITRU — Nedelcu</title>
+<meta name="theme-color" content="#0A0F16">
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PUPITRU">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600;700&family=Saira+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0F16; --panel:#101823; --panel2:#0C121B; --line:#1C2736; --line2:#243248;
+  --text:#DCE4EE; --muted:#7C8899; --dim:#55606F;
+  --cyan:#38D3E8; --cyan-dk:#0F4E5E; --amber:#F0A93B; --green:#4ADE80; --red:#F47174;
+  --font:"Saira","Segoe UI",system-ui,sans-serif;
+  --cond:"Saira Condensed","Saira",sans-serif;
+  --mono:"JetBrains Mono","SF Mono",monospace;
+  --sab:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.45}
+body{padding-bottom:calc(78px + var(--sab));
+  background-image:radial-gradient(700px 380px at 80% -6%,rgba(56,211,232,.09),transparent 60%),
+                   radial-gradient(500px 400px at -10% 108%,rgba(240,169,59,.05),transparent 55%);}
+button{font-family:inherit;color:inherit;background:none;border:none;padding:0;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:16px;color:var(--text);background:var(--panel2);
+  border:1px solid var(--line2);border-radius:10px;padding:10px 12px;width:100%;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--cyan)}
+h1,h2,h3{margin:0;font-family:var(--cond);letter-spacing:.02em}
+::placeholder{color:var(--dim)}
+
+/* ---------- Header ---------- */
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px}
+.brand .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.28em;color:var(--cyan);text-transform:uppercase}
+.brand h1{font-size:24px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.brand .date{font-size:12.5px;color:var(--muted);margin-top:2px}
+.scorepill{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--amber);
+  border:1px solid var(--line2);background:var(--panel);border-radius:999px;padding:7px 12px;white-space:nowrap}
+.scorepill small{color:var(--muted);font-weight:400;margin-right:5px}
+
+/* ---------- Layout ---------- */
+main{padding:0 14px}
+section.tab{display:none}
+section.tab.on{display:block;animation:fadein .18s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;position:relative}
+.card .accent{position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:var(--cyan)}
+.card h2{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:10px}
+.card h2 b{color:var(--text)}
+.sub{font-size:12.5px;color:var(--muted)}
+.empty{color:var(--dim);font-size:13.5px;padding:8px 2px;font-style:italic}
+
+/* ---------- Score ring ---------- */
+.ringwrap{display:flex;align-items:center;gap:16px}
+.ring{position:relative;width:118px;height:118px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .val b{font-family:var(--mono);font-size:26px;color:var(--amber);line-height:1}
+.ring .val span{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:3px}
+.ringinfo{flex:1;min-width:0}
+.ringinfo .big{font-size:14px;font-weight:600}
+.ringinfo .delta{font-family:var(--mono);font-size:12px;margin-top:3px}
+.ringinfo .delta.up{color:var(--green)} .ringinfo .delta.down{color:var(--red)} .ringinfo .delta.flat{color:var(--muted)}
+.ringinfo .sub{margin-top:6px}
+
+/* ---------- Tasks ---------- */
+.task{display:flex;align-items:flex-start;gap:11px;padding:11px 2px;border-bottom:1px solid var(--line)}
+.task:last-child{border-bottom:none}
+.chk{width:24px;height:24px;flex:none;margin-top:1px;border:2px solid var(--line2);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:14px;color:transparent;transition:.15s}
+.task.done .chk{background:var(--green);border-color:var(--green);color:#06240F}
+.tbody{flex:1;min-width:0}
+.ttitle{font-size:14.5px;font-weight:500;word-break:break-word}
+.task.done .ttitle{color:var(--dim);text-decoration:line-through}
+.tmeta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;align-items:center}
+.chip{font-size:10.5px;font-family:var(--mono);border-radius:6px;padding:2px 7px;border:1px solid var(--line2);color:var(--muted)}
+.chip.proj{border-color:transparent;font-weight:500}
+.chip.due{color:var(--muted)} .chip.due.today{color:var(--amber);border-color:rgba(240,169,59,.4)}
+.chip.due.late{color:var(--red);border-color:rgba(244,113,116,.45)}
+.chip.pts{color:var(--cyan);border-color:rgba(56,211,232,.3)}
+.imp{letter-spacing:1px;font-size:10px;color:var(--amber)}
+.imp .off{color:var(--line2)}
+.tmore{flex:none;color:var(--dim);font-size:18px;padding:2px 6px;margin-top:-2px}
+
+/* ---------- Projects ---------- */
+.proj-head{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.proj-dot{width:10px;height:10px;border-radius:3px;flex:none}
+.proj-name{font-size:15px;font-weight:600;flex:1;min-width:0}
+.proj-count{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.pbar{height:4px;background:var(--panel2);border-radius:3px;margin:9px 0 4px;overflow:hidden}
+.pbar i{display:block;height:100%;border-radius:3px}
+
+/* ---------- Habits ---------- */
+.hrow{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--line)}
+.hrow:last-child{border-bottom:none}
+.hemoji{font-size:20px;width:28px;text-align:center;flex:none}
+.hname{flex:1;font-size:14.5px;font-weight:500;min-width:0}
+.hstreak{font-family:var(--mono);font-size:11.5px;color:var(--muted);flex:none}
+.htoggle{width:30px;height:30px;flex:none;border:2px solid var(--line2);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;color:transparent;font-size:15px;transition:.15s}
+.hrow.on .htoggle{background:var(--green);border-color:var(--green);color:#06240F}
+.hgrid{display:grid;grid-template-columns:auto repeat(7,1fr);gap:6px 4px;align-items:center;font-size:11px}
+.hgrid .gh{font-family:var(--mono);font-size:9.5px;color:var(--dim);text-align:center;text-transform:uppercase}
+.hgrid .gl{color:var(--muted);font-size:15px;text-align:center}
+.gdot{width:20px;height:20px;margin:0 auto;border-radius:6px;background:var(--panel2);border:1px solid var(--line);transition:.12s}
+.gdot.on{background:var(--green);border-color:var(--green)}
+.gdot.fut{opacity:.25}
+
+/* ---------- Ideas ---------- */
+.idea{padding:11px 2px;border-bottom:1px solid var(--line)}
+.idea:last-child{border-bottom:none}
+.idea .it{font-size:14.5px;font-weight:500}
+.idea .im{font-size:11.5px;color:var(--muted);margin-top:3px;font-family:var(--mono)}
+.promptcard{border-color:rgba(240,169,59,.45)}
+.promptcard .accent{background:var(--amber)}
+
+/* ---------- Charts ---------- */
+.chart{width:100%;height:auto;display:block}
+.legendrow{display:flex;gap:14px;margin-top:6px;font-size:11px;color:var(--muted)}
+.legendrow i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.stats3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 8px;text-align:center}
+.stat b{display:block;font-family:var(--mono);font-size:19px;color:var(--cyan)}
+.stat span{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+/* ---------- Controls ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:600;
+  border-radius:10px;padding:11px 16px;border:1px solid var(--line2);background:var(--panel2);color:var(--text)}
+.btn.pri{background:var(--cyan);border-color:var(--cyan);color:#04222A}
+.btn.danger{color:var(--red);border-color:rgba(244,113,116,.4)}
+.btn.small{padding:7px 12px;font-size:12.5px;font-weight:500}
+.btn.wide{width:100%}
+.seg{display:flex;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:3px;gap:3px}
+.seg button{flex:1;font-size:13px;padding:8px 4px;border-radius:8px;color:var(--muted);font-weight:500}
+.seg button.on{background:var(--cyan-dk);color:var(--cyan);font-weight:600}
+.stars button{font-size:22px;color:var(--line2);padding:2px 3px}
+.stars button.on{color:var(--amber)}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
+.swatches{display:flex;gap:9px}
+.sw{width:30px;height:30px;border-radius:9px;border:2px solid transparent}
+.sw.on{border-color:#fff}
+.rowflex{display:flex;gap:9px}
+.rowflex>*{flex:1}
+.addline{display:flex;gap:8px;margin-top:10px}
+.addline input{flex:1}
+.addline .btn{flex:none}
+
+/* ---------- FAB / Tabbar ---------- */
+.fab{position:fixed;right:16px;bottom:calc(88px + var(--sab));width:54px;height:54px;border-radius:16px;
+  background:var(--cyan);color:#04222A;font-size:28px;font-weight:600;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(56,211,232,.35);z-index:40}
+nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
+  background:rgba(12,17,26,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);padding:8px 4px calc(8px + var(--sab))}
+.tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--dim);font-size:9.5px;
+  letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.tabbar button .ic{font-size:19px;line-height:1;filter:grayscale(1);opacity:.55}
+.tabbar button.on{color:var(--cyan)}
+.tabbar button.on .ic{filter:none;opacity:1}
+
+/* ---------- Modals ---------- */
+.ovl{position:fixed;inset:0;background:rgba(4,7,12,.66);backdrop-filter:blur(3px);z-index:90;display:none}
+.ovl.open{display:block;animation:fadein .15s}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:100;background:var(--panel);border:1px solid var(--line2);border-bottom:none;
+  border-radius:18px 18px 0 0;padding:18px 16px calc(20px + var(--sab));max-height:86vh;overflow-y:auto;display:none}
+.sheet.open{display:block;animation:slideup .22s ease}
+@keyframes slideup{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet h3{font-size:17px;margin-bottom:16px}
+.sheet .grab{width:38px;height:4px;border-radius:2px;background:var(--line2);margin:0 auto 14px}
+.entry{padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.entry:last-child{border-bottom:none}
+.entry .ed{font-family:var(--mono);font-size:10.5px;color:var(--cyan);margin-bottom:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="eyebrow">NED · Centru personal</div>
+    <h1>Pupitru</h1>
+    <div class="date" id="hdrDate"></div>
+  </div>
+  <div class="scorepill" id="hdrScore"><small>SĂPT.</small>0 p</div>
+</header>
+
+<main>
+  <!-- ================= AZI ================= -->
+  <section class="tab on" id="tab-azi">
+    <div class="card">
+      <span class="accent" style="background:var(--amber)"></span>
+      <h2>Scor săptămânal</h2>
+      <div class="ringwrap">
+        <div class="ring">
+          <svg width="118" height="118" viewBox="0 0 118 118">
+            <circle cx="59" cy="59" r="50" fill="none" stroke="var(--panel2)" stroke-width="9"/>
+            <circle id="ringArc" cx="59" cy="59" r="50" fill="none" stroke="var(--amber)" stroke-width="9"
+              stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16"/>
+          </svg>
+          <div class="val"><b id="ringVal">0</b><span>puncte</span></div>
+        </div>
+        <div class="ringinfo">
+          <div class="big" id="ringTarget"></div>
+          <div class="delta" id="ringDelta"></div>
+          <div class="sub" id="ringSub"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card promptcard" id="cardPrompt" style="display:none">
+      <span class="accent"></span>
+      <h2>💡 Din bancul de idei</h2>
+      <div class="ttitle" id="promptTitle" style="margin-bottom:8px"></div>
+      <div class="sub" style="margin-bottom:10px">Ai apucat să cercetezi? Notează ce ai aflat — chiar și două rânduri.</div>
+      <textarea id="promptText" rows="2" placeholder="Ce am aflat…"></textarea>
+      <div class="rowflex" style="margin-top:10px">
+        <button class="btn small" id="promptLater">Mai târziu</button>
+        <button class="btn small pri" id="promptSave">Salvează nota</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="accent"></span>
+      <h2>Prioritare azi</h2>
+      <div class="sub" id="aziSummary" style="margin:-4px 0 6px"></div>
+      <div id="aziTasks"></div>
+    </div>
+
+    <div class="card">
+      <span class="accent" style="background:var(--green)"></span>
+      <h2>Obiceiurile de azi</h2>
+      <div id="aziHabits"></div>
+    </div>
+  </section>
+
+  <!-- ================= PROIECTE ================= -->
+  <section class="tab" id="tab-proiecte">
+    <div class="seg" id="taskFilter" style="margin-bottom:12px">
+      <button data-f="active" class="on">Active</button>
+      <button data-f="done">Finalizate</button>
+    </div>
+    <div id="projList"></div>
+    <button class="btn wide" id="btnAddProj">＋ Proiect nou</button>
+  </section>
+
+  <!-- ================= OBICEIURI ================= -->
+  <section class="tab" id="tab-obiceiuri">
+    <div class="card">
+      <span class="accent" style="background:var(--green)"></span>
+      <h2>Bifează pentru azi</h2>
+      <div id="habToday"></div>
+      <div class="addline">
+        <input id="habNew" placeholder="Obicei nou (ex: 🧘 Meditație)">
+        <button class="btn small" id="habAdd">Adaugă</button>
+      </div>
+    </div>
+    <div class="card">
+      <span class="accent" style="background:var(--green)"></span>
+      <h2>Ultimele 7 zile <span class="sub" style="text-transform:none;letter-spacing:0"> · atinge ca să corectezi</span></h2>
+      <div class="hgrid" id="habGrid"></div>
+    </div>
+  </section>
+
+  <!-- ================= IDEI ================= -->
+  <section class="tab" id="tab-idei">
+    <div class="card">
+      <span class="accent" style="background:var(--amber)"></span>
+      <h2>Banc de idei</h2>
+      <div class="sub" style="margin:-4px 0 8px">Lucruri de cercetat. Din când în când, PUPITRU te va întreba ce ai aflat.</div>
+      <div class="addline" style="margin-top:0;margin-bottom:6px">
+        <input id="ideaNew" placeholder="Idee de cercetat…">
+        <button class="btn small" id="ideaAdd">Adaugă</button>
+      </div>
+      <div id="ideaList"></div>
+    </div>
+  </section>
+
+  <!-- ================= EVOLUȚIE ================= -->
+  <section class="tab" id="tab-evolutie">
+    <div class="stats3">
+      <div class="stat"><b id="stDone">0</b><span>Task-uri gata</span></div>
+      <div class="stat"><b id="stPts">0</b><span>Puncte total</span></div>
+      <div class="stat"><b id="stStreak">0</b><span>Serie maximă</span></div>
+    </div>
+    <div class="card">
+      <span class="accent"></span>
+      <h2>Curba de realizare <b>— 30 zile</b></h2>
+      <div class="sub" style="margin:-4px 0 8px">Puncte pe zi: task-uri finalizate × importanță + obiceiuri.</div>
+      <div id="chDaily"></div>
+    </div>
+    <div class="card">
+      <span class="accent" style="background:var(--amber)"></span>
+      <h2>Scor săptămânal <b>— 8 săptămâni</b></h2>
+      <div id="chWeekly"></div>
+    </div>
+    <div class="card">
+      <span class="accent" style="background:var(--green)"></span>
+      <h2>Consistența obiceiurilor</h2>
+      <div id="chHabits"></div>
+    </div>
+    <div class="rowflex"><button class="btn" id="btnBackup">Copiază backup</button><button class="btn" id="btnRestore">Importă backup</button></div>
+  </section>
+</main>
+
+<button class="fab" id="fab" aria-label="Task nou">＋</button>
+
+<nav class="tabbar">
+  <button data-tab="azi" class="on"><span class="ic">☀️</span>Azi</button>
+  <button data-tab="proiecte"><span class="ic">📋</span>Proiecte</button>
+  <button data-tab="obiceiuri"><span class="ic">🔁</span>Obiceiuri</button>
+  <button data-tab="idei"><span class="ic">💡</span>Idei</button>
+  <button data-tab="evolutie"><span class="ic">📈</span>Evoluție</button>
+</nav>
+
+<!-- ============ MODAL: TASK ============ -->
+<div class="ovl" id="ovl"></div>
+<div class="sheet" id="shTask">
+  <div class="grab"></div>
+  <h3 id="shTaskTitle">Task nou</h3>
+  <div class="field"><label>Denumire</label><input id="tfTitle" placeholder="Ce ai de făcut?"></div>
+  <div class="field"><label>Proiect</label><select id="tfProj"></select></div>
+  <div class="field"><label>Prioritate (urgență)</label>
+    <div class="seg" id="tfPrio">
+      <button data-v="1">Scăzută</button><button data-v="2" class="on">Medie</button><button data-v="3">Ridicată</button>
+    </div>
+  </div>
+  <div class="field"><label>Importanță</label>
+    <div class="stars" id="tfImp">
+      <button data-v="1">★</button><button data-v="2">★</button><button data-v="3">★</button><button data-v="4">★</button><button data-v="5">★</button>
+    </div>
+  </div>
+  <div class="field"><label>Termen limită</label><input type="date" id="tfDue"></div>
+  <div class="rowflex">
+    <button class="btn danger" id="tfDelete" style="display:none">Șterge</button>
+    <button class="btn pri" id="tfSave">Salvează</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: PROIECT ============ -->
+<div class="sheet" id="shProj">
+  <div class="grab"></div>
+  <h3>Proiect nou</h3>
+  <div class="field"><label>Denumire</label><input id="pfName" placeholder="ex: Hală Aveuro"></div>
+  <div class="field"><label>Culoare</label><div class="swatches" id="pfColors"></div></div>
+  <button class="btn pri wide" id="pfSave">Salvează proiectul</button>
+</div>
+
+<!-- ============ MODAL: IDEE ============ -->
+<div class="sheet" id="shIdea">
+  <div class="grab"></div>
+  <h3 id="ifTitle"></h3>
+  <div id="ifEntries" style="margin-bottom:12px"></div>
+  <div class="field"><label>Ce am aflat</label><textarea id="ifText" rows="3" placeholder="Notează descoperirile…"></textarea></div>
+  <div class="rowflex">
+    <button class="btn danger" id="ifDelete">Șterge ideea</button>
+    <button class="btn pri" id="ifSave">Adaugă nota</button>
+  </div>
+</div>
+<script>
+/* =========================================================
+   PUPITRU — stare, stocare persistentă, utilitare
+   ========================================================= */
+const KEY = 'pupitru-v1';
+let S = null;            // starea aplicației
+let memFallback = null;  // dacă storage nu e disponibil
+
+const PRIO = {1:{l:'Scăzută',m:1}, 2:{l:'Medie',m:1.5}, 3:{l:'Ridicată',m:2}};
+const HABIT_PTS = 2;
+const PROJ_COLORS = ['#38D3E8','#F0A93B','#4ADE80','#60A5FA','#A78BFA','#F472B6'];
+const MONTHS = ['ian','feb','mar','apr','mai','iun','iul','aug','sep','oct','nov','dec'];
+const WDAYS  = ['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'];
+const WDAYS2 = ['Du','Lu','Ma','Mi','Jo','Vi','Sâ'];
+
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const $  = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function keyOf(d){ const p=n=>String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
+function todayKey(){ return keyOf(new Date()); }
+function parseKey(k){ const [y,m,d]=k.split('-').map(Number); return new Date(y,m-1,d); }
+function addDays(k,n){ const d=parseKey(k); d.setDate(d.getDate()+n); return keyOf(d); }
+function daysBetween(k1,k2){ return Math.round((parseKey(k2)-parseKey(k1))/86400000); }
+function mondayOf(k){ const d=parseKey(k); const w=(d.getDay()+6)%7; d.setDate(d.getDate()-w); return keyOf(d); }
+function fmtShort(k){ const d=parseKey(k); return d.getDate()+' '+MONTHS[d.getMonth()]; }
+function taskPoints(t){ return Math.round(t.imp * PRIO[t.prio].m * 10)/10; }
+
+/* ---------- Stocare ---------- */
+async function loadState(){
+  try{
+    const v = localStorage.getItem(KEY);
+    if(v){ S = JSON.parse(v); migrate(); return; }
+  }catch(e){ /* stocare indisponibilă */ }
+  S = seed();
+  await saveState();
+}
+async function saveState(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch(e){ memFallback = JSON.stringify(S); }
+}
+function migrate(){
+  S.projects ||= []; S.tasks ||= []; S.habits ||= []; S.hlog ||= {}; S.ideas ||= [];
+}
+function seed(){
+  const t = todayKey();
+  return {
+    projects: [
+      {id:uid(), name:'Hală Aveuro',   color:PROJ_COLORS[0]},
+      {id:uid(), name:'UM Craiova',    color:PROJ_COLORS[1]},
+      {id:uid(), name:'Seră Oltenița', color:PROJ_COLORS[2]},
+      {id:uid(), name:'8 Creșe',       color:PROJ_COLORS[3]},
+      {id:uid(), name:'Firmă / Administrativ', color:PROJ_COLORS[4]},
+      {id:uid(), name:'Personal',      color:PROJ_COLORS[5]},
+    ],
+    tasks: [],
+    habits: [
+      {id:uid(), emoji:'📵', name:'Zi fără telefon (consum propriu)'},
+      {id:uid(), emoji:'🚭', name:'Zi fără fumat'},
+      {id:uid(), emoji:'🎯', name:'Focus — fără apeluri în intervale'},
+      {id:uid(), emoji:'💪', name:'Sport'},
+      {id:uid(), emoji:'📖', name:'Citit'},
+      {id:uid(), emoji:'🧠', name:'Învățat ceva nou'},
+    ],
+    hlog: {},
+    ideas: [],
+    created: t,
+  };
+}
+
+/* ---------- Calcule scor ---------- */
+function dayPoints(k){
+  let p = 0;
+  for(const t of S.tasks) if(t.done && t.doneAt === k) p += taskPoints(t);
+  const h = S.hlog[k]; if(h) p += Object.keys(h).filter(id=>h[id]).length * HABIT_PTS;
+  return Math.round(p*10)/10;
+}
+function weekScore(mondayK){
+  let p=0; for(let i=0;i<7;i++) p += dayPoints(addDays(mondayK,i));
+  return Math.round(p*10)/10;
+}
+function habitStreak(hid){
+  let k = todayKey(), n = 0;
+  if(!(S.hlog[k] && S.hlog[k][hid])) k = addDays(k,-1);          // dacă azi nu e bifat, numără de ieri
+  while(S.hlog[k] && S.hlog[k][hid]){ n++; k = addDays(k,-1); }
+  return n;
+}
+function bestStreak(){
+  let best = 0;
+  for(const h of S.habits){
+    // parcurge log-ul cronologic pentru obiceiul h
+    const days = Object.keys(S.hlog).filter(k=>S.hlog[k][h.id]).sort();
+    let run=0, prev=null;
+    for(const k of days){
+      run = (prev && daysBetween(prev,k)===1) ? run+1 : 1;
+      if(run>best) best=run; prev=k;
+    }
+  }
+  return best;
+}
+
+/* ---------- Sortare task-uri pentru „Azi" ---------- */
+function urgencyRank(t){
+  const today = todayKey();
+  if(t.due && t.due <  today) return 0;   // restant
+  if(t.due === today)         return 1;   // azi
+  return 2;                                // restul
+}
+function sortForToday(a,b){
+  const ua=urgencyRank(a), ub=urgencyRank(b);
+  if(ua!==ub) return ua-ub;
+  if(a.prio!==b.prio) return b.prio-a.prio;
+  if(a.imp!==b.imp)   return b.imp-a.imp;
+  return (a.due||'9999') < (b.due||'9999') ? -1 : 1;
+}
+function pickPromptIdea(){
+  const today = todayKey();
+  const eligible = S.ideas.filter(i=>{
+    const ref = i.lastPromptAt || i.createdAt;
+    return daysBetween(ref, today) >= 4;
+  });
+  if(!eligible.length) return null;
+  return eligible[Math.floor(Math.random()*eligible.length)];
+}
+</script>
+<script>
+/* =========================================================
+   PUPITRU — randare, grafice, interacțiuni
+   ========================================================= */
+let filterMode = 'active';
+let editTaskId = null, tfState = {prio:2, imp:3};
+let projColorPick = PROJ_COLORS[0];
+let currentPrompt = null, currentIdeaId = null;
+
+function projById(id){ return S.projects.find(p=>p.id===id); }
+
+/* ---------- Header ---------- */
+function renderHeader(){
+  const now = new Date();
+  $('hdrDate').textContent = WDAYS[now.getDay()]+', '+now.getDate()+' '+MONTHS[now.getMonth()]+' '+now.getFullYear();
+  $('hdrScore').innerHTML = '<small>SĂPT.</small>'+weekScore(mondayOf(todayKey()))+' p';
+}
+
+/* ---------- Task row (comun) ---------- */
+function taskRowHTML(t){
+  const p = projById(t.pid);
+  const today = todayKey();
+  let due = '';
+  if(t.due){
+    if(!t.done && t.due < today)      due = '<span class="chip due late">restant · '+fmtShort(t.due)+'</span>';
+    else if(t.due === today)          due = '<span class="chip due today">azi</span>';
+    else                              due = '<span class="chip due">'+fmtShort(t.due)+'</span>';
+  }
+  const stars = '<span class="imp">'+'★'.repeat(t.imp)+'<span class="off">'+'★'.repeat(5-t.imp)+'</span></span>';
+  const projChip = p ? '<span class="chip proj" style="color:'+p.color+';background:'+p.color+'1a">'+esc(p.name)+'</span>' : '';
+  return '<div class="task'+(t.done?' done':'')+'" data-id="'+t.id+'">'
+    + '<button class="chk" data-act="toggle">✓</button>'
+    + '<div class="tbody"><div class="ttitle">'+esc(t.title)+'</div>'
+    + '<div class="tmeta">'+projChip+due
+    + '<span class="chip">'+PRIO[t.prio].l+'</span>'+stars
+    + '<span class="chip pts">'+taskPoints(t)+'p</span></div></div>'
+    + '<button class="tmore" data-act="edit">⋯</button></div>';
+}
+
+/* ---------- AZI ---------- */
+function renderAzi(){
+  const today = todayKey();
+  const open = S.tasks.filter(t=>!t.done).sort(sortForToday);
+  const late = open.filter(t=>t.due && t.due<today).length;
+  const forToday = open.filter(t=>t.due===today).length;
+  const doneToday = S.tasks.filter(t=>t.done && t.doneAt===today).length;
+  $('aziSummary').textContent = open.length
+    ? forToday+' pentru azi · '+late+' restante · '+doneToday+' finalizate azi'
+    : 'Nimic în așteptare. Adaugă un task cu ＋.';
+  $('aziTasks').innerHTML = open.length
+    ? open.slice(0,6).map(taskRowHTML).join('')
+    : '<div class="empty">Zi liberă la task-uri — sau apasă ＋ ca să adaugi.</div>';
+
+  renderHabitRows($('aziHabits'), false);
+
+  /* scor + inel */
+  const mon = mondayOf(today), prevMon = addDays(mon,-7);
+  const cur = weekScore(mon), prev = weekScore(prevMon);
+  const target = Math.max(100, Math.round(prev*1.1/5)*5);
+  const pct = Math.min(cur/target, 1);
+  const C = 2*Math.PI*50;
+  $('ringArc').setAttribute('stroke-dashoffset', String(C*(1-pct)));
+  $('ringVal').textContent = cur;
+  $('ringTarget').textContent = 'Țintă săptămânală: '+target+' p';
+  const d = Math.round((cur-prev)*10)/10;
+  const el = $('ringDelta');
+  if(prev===0 && cur===0){ el.className='delta flat'; el.textContent='Prima săptămână — hai să punem puncte pe tablă.'; }
+  else if(d>0){ el.className='delta up';   el.textContent='▲ +'+d+' p față de săptămâna trecută'; }
+  else if(d<0){ el.className='delta down'; el.textContent='▼ '+d+' p față de săptămâna trecută'; }
+  else        { el.className='delta flat'; el.textContent='= egal cu săptămâna trecută'; }
+  $('ringSub').textContent = 'Task-uri finalizate × importanță + obiceiuri bifate ('+HABIT_PTS+'p fiecare).';
+
+  /* prompt idee */
+  if(!currentPrompt) currentPrompt = pickPromptIdea();
+  if(currentPrompt && S.ideas.some(i=>i.id===currentPrompt.id)){
+    $('cardPrompt').style.display='block';
+    $('promptTitle').textContent = currentPrompt.title;
+  } else { $('cardPrompt').style.display='none'; currentPrompt=null; }
+}
+
+/* ---------- Obiceiuri (rânduri comune) ---------- */
+function renderHabitRows(container, withDelete){
+  const k = todayKey(), log = S.hlog[k]||{};
+  container.innerHTML = S.habits.length ? S.habits.map(h=>{
+    const on = !!log[h.id], st = habitStreak(h.id);
+    return '<div class="hrow'+(on?' on':'')+'" data-id="'+h.id+'">'
+      + '<span class="hemoji">'+h.emoji+'</span>'
+      + '<span class="hname">'+esc(h.name)+'</span>'
+      + (st>0 ? '<span class="hstreak">🔥 '+st+'z</span>' : '')
+      + (withDelete ? '<button class="tmore" data-act="delhab">⋯</button>' : '')
+      + '<button class="htoggle" data-act="hab">✓</button></div>';
+  }).join('') : '<div class="empty">Adaugă primul obicei mai jos.</div>';
+}
+
+function renderObiceiuri(){
+  renderHabitRows($('habToday'), true);
+  /* grila 7 zile */
+  const days=[]; for(let i=6;i>=0;i--) days.push(addDays(todayKey(),-i));
+  let html = '<div></div>' + days.map(k=>{
+    const d=parseKey(k);
+    return '<div class="gh">'+WDAYS2[d.getDay()]+'<br>'+d.getDate()+'</div>';
+  }).join('');
+  for(const h of S.habits){
+    html += '<div class="gl">'+h.emoji+'</div>';
+    html += days.map(k=>{
+      const on = S.hlog[k] && S.hlog[k][h.id];
+      return '<button class="gdot'+(on?' on':'')+'" data-day="'+k+'" data-hid="'+h.id+'"></button>';
+    }).join('');
+  }
+  $('habGrid').innerHTML = html;
+}
+
+/* ---------- Proiecte ---------- */
+function renderProiecte(){
+  const list = $('projList');
+  if(!S.projects.length){ list.innerHTML='<div class="empty" style="padding:20px 4px">Niciun proiect încă.</div>'; return; }
+  list.innerHTML = S.projects.map(p=>{
+    const all  = S.tasks.filter(t=>t.pid===p.id);
+    const done = all.filter(t=>t.done);
+    const show = (filterMode==='active' ? all.filter(t=>!t.done).sort(sortForToday)
+                                        : done.sort((a,b)=> (b.doneAt||'') < (a.doneAt||'') ? -1:1));
+    const pct = all.length ? Math.round(done.length/all.length*100) : 0;
+    return '<div class="card" data-pid="'+p.id+'">'
+      + '<div class="proj-head"><span class="proj-dot" style="background:'+p.color+'"></span>'
+      + '<span class="proj-name">'+esc(p.name)+'</span>'
+      + '<span class="proj-count">'+done.length+'/'+all.length+'</span>'
+      + '<button class="tmore" data-act="delproj">⋯</button></div>'
+      + '<div class="pbar"><i style="width:'+pct+'%;background:'+p.color+'"></i></div>'
+      + (show.length ? show.map(taskRowHTML).join('')
+                     : '<div class="empty">'+(filterMode==='active'?'Niciun task activ.':'Nimic finalizat încă.')+'</div>')
+      + '<button class="btn small" data-act="addtask" style="margin-top:10px">＋ Task în '+esc(p.name)+'</button>'
+      + '</div>';
+  }).join('');
+}
+
+/* ---------- Idei ---------- */
+function renderIdei(){
+  $('ideaList').innerHTML = S.ideas.length ? S.ideas.map(i=>{
+    const n = i.entries.length;
+    return '<div class="idea" data-id="'+i.id+'"><div class="it">'+esc(i.title)+'</div>'
+      + '<div class="im">'+(n? n+(n===1?' notă':' note') : 'fără note încă')+' · adăugată '+fmtShort(i.createdAt)+'</div></div>';
+  }).join('') : '<div class="empty">Scrie prima idee de cercetat.</div>';
+}
+
+/* ---------- Grafice SVG ---------- */
+function areaChart(container, series, color){
+  const W=320,H=130,PL=8,PR=8,PT=14,PB=20;
+  const vs = series.map(s=>s.v), maxV = Math.max(5, ...vs);
+  const iw = W-PL-PR, ih = H-PT-PB, n = series.length;
+  const X = i => PL + (n===1 ? iw/2 : i*iw/(n-1));
+  const Y = v => PT + ih - (v/maxV)*ih;
+  let line='', area='M'+X(0)+' '+(PT+ih);
+  series.forEach((s,i)=>{ const x=X(i).toFixed(1), y=Y(s.v).toFixed(1);
+    line += (i?'L':'M')+x+' '+y+' '; area += 'L'+x+' '+y+' '; });
+  area += 'L'+X(n-1).toFixed(1)+' '+(PT+ih)+' Z';
+  const last = series[n-1];
+  const lab = (i,anchor)=>'<text x="'+X(i)+'" y="'+(H-5)+'" fill="#55606F" font-size="9" font-family="JetBrains Mono,monospace" text-anchor="'+anchor+'">'+fmtShort(series[i].k)+'</text>';
+  container.innerHTML = '<svg class="chart" viewBox="0 0 '+W+' '+H+'">'
+    + '<line x1="'+PL+'" y1="'+(PT+ih)+'" x2="'+(W-PR)+'" y2="'+(PT+ih)+'" stroke="#1C2736"/>'
+    + '<line x1="'+PL+'" y1="'+Y(maxV)+'" x2="'+(W-PR)+'" y2="'+Y(maxV)+'" stroke="#1C2736" stroke-dasharray="3 4"/>'
+    + '<text x="'+PL+'" y="'+(Y(maxV)-4)+'" fill="#55606F" font-size="9" font-family="JetBrains Mono,monospace">'+maxV+'p</text>'
+    + '<path d="'+area+'" fill="'+color+'" opacity="0.13"/>'
+    + '<path d="'+line+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
+    + '<circle cx="'+X(n-1)+'" cy="'+Y(last.v)+'" r="3.5" fill="'+color+'"/>'
+    + '<text x="'+(X(n-1)-6)+'" y="'+(Y(last.v)-8)+'" fill="'+color+'" font-size="10" font-weight="700" font-family="JetBrains Mono,monospace" text-anchor="end">'+last.v+'p</text>'
+    + lab(0,'start') + lab(Math.floor(n/2),'middle') + lab(n-1,'end')
+    + '</svg>';
+}
+function barChart(container, series, color){
+  const W=320,H=140,PB=22,PT=16;
+  const maxV = Math.max(5, ...series.map(s=>s.v));
+  const n=series.length, slot=W/n, bw=Math.min(26, slot*0.55);
+  let bars='';
+  series.forEach((s,i)=>{
+    const h=(s.v/maxV)*(H-PT-PB), x=i*slot+(slot-bw)/2, y=H-PB-h;
+    const cur = i===n-1;
+    bars += '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw+'" height="'+Math.max(h,1).toFixed(1)+'" rx="4" fill="'+color+'" opacity="'+(cur?1:0.45)+'"/>'
+      + (s.v>0 ? '<text x="'+(x+bw/2)+'" y="'+(y-4)+'" fill="'+(cur?color:'#7C8899')+'" font-size="9" font-weight="700" text-anchor="middle" font-family="JetBrains Mono,monospace">'+s.v+'</text>' : '')
+      + '<text x="'+(x+bw/2)+'" y="'+(H-6)+'" fill="#55606F" font-size="8.5" text-anchor="middle" font-family="JetBrains Mono,monospace">'+s.label+'</text>';
+  });
+  container.innerHTML = '<svg class="chart" viewBox="0 0 '+W+' '+H+'">'
+    + '<line x1="0" y1="'+(H-PB)+'" x2="'+W+'" y2="'+(H-PB)+'" stroke="#1C2736"/>'+bars+'</svg>';
+}
+
+function renderEvolutie(){
+  const done = S.tasks.filter(t=>t.done);
+  let totalPts = 0;
+  for(const t of done) totalPts += taskPoints(t);
+  for(const k in S.hlog) totalPts += Object.keys(S.hlog[k]).filter(id=>S.hlog[k][id]).length*HABIT_PTS;
+  $('stDone').textContent = done.length;
+  $('stPts').textContent = Math.round(totalPts);
+  $('stStreak').textContent = bestStreak()+'z';
+
+  const daily=[]; for(let i=29;i>=0;i--){ const k=addDays(todayKey(),-i); daily.push({k, v:dayPoints(k)}); }
+  areaChart($('chDaily'), daily, '#38D3E8');
+
+  const weeks=[]; const mon0=mondayOf(todayKey());
+  for(let i=7;i>=0;i--){ const m=addDays(mon0,-7*i); weeks.push({label:fmtShort(m), v:weekScore(m)}); }
+  barChart($('chWeekly'), weeks, '#F0A93B');
+
+  const hd=[]; for(let i=29;i>=0;i--){ const k=addDays(todayKey(),-i);
+    const l=S.hlog[k]; hd.push({k, v:l?Object.keys(l).filter(id=>l[id]).length:0}); }
+  const rows = S.habits.map(h=>{
+    let c=0; for(let i=0;i<30;i++){ const k=addDays(todayKey(),-i); if(S.hlog[k]&&S.hlog[k][h.id]) c++; }
+    const pct=Math.round(c/30*100);
+    return '<div class="hrow"><span class="hemoji">'+h.emoji+'</span><span class="hname">'+esc(h.name)
+      + '<div class="pbar" style="margin:6px 0 0"><i style="width:'+pct+'%;background:#4ADE80"></i></div></span>'
+      + '<span class="hstreak">'+c+'/30 · 🔥'+habitStreak(h.id)+'</span></div>';
+  }).join('');
+  $('chHabits').innerHTML = '<div id="chHabLine"></div>'+rows;
+  areaChart($('chHabLine'), hd, '#4ADE80');
+}
+
+function renderAll(){
+  renderHeader(); renderAzi(); renderProiecte(); renderObiceiuri(); renderIdei(); renderEvolutie();
+}
+</script>
+<script>
+/* =========================================================
+   PUPITRU — modale, evenimente, inițializare
+   ========================================================= */
+function openSheet(id){ $('ovl').classList.add('open'); $(id).classList.add('open'); }
+function closeSheets(){
+  $('ovl').classList.remove('open');
+  ['shTask','shProj','shIdea'].forEach(i=>$(i).classList.remove('open'));
+  editTaskId=null; currentIdeaId=null;
+}
+
+/* ---------- Task modal ---------- */
+function fillProjSelect(sel){
+  $('tfProj').innerHTML = S.projects.map(p=>'<option value="'+p.id+'"'+(p.id===sel?' selected':'')+'>'+esc(p.name)+'</option>').join('');
+}
+function setPrio(v){ tfState.prio=v; document.querySelectorAll('#tfPrio button').forEach(b=>b.classList.toggle('on', +b.dataset.v===v)); }
+function setImp(v){ tfState.imp=v; document.querySelectorAll('#tfImp button').forEach(b=>b.classList.toggle('on', +b.dataset.v<=v)); }
+function openTaskModal(taskId, presetPid){
+  if(!S.projects.length){ S.projects.push({id:uid(),name:'General',color:PROJ_COLORS[0]}); }
+  editTaskId = taskId||null;
+  const t = taskId ? S.tasks.find(x=>x.id===taskId) : null;
+  $('shTaskTitle').textContent = t ? 'Editează task' : 'Task nou';
+  $('tfTitle').value = t ? t.title : '';
+  fillProjSelect(t ? t.pid : (presetPid || S.projects[0].id));
+  setPrio(t ? t.prio : 2); setImp(t ? t.imp : 3);
+  $('tfDue').value = t && t.due ? t.due : '';
+  $('tfDelete').style.display = t ? 'block' : 'none';
+  openSheet('shTask');
+  if(!t) setTimeout(()=>$('tfTitle').focus(), 250);
+}
+async function saveTask(){
+  const title = $('tfTitle').value.trim();
+  if(!title){ $('tfTitle').focus(); return; }
+  const data = { title, pid:$('tfProj').value, prio:tfState.prio, imp:tfState.imp, due:$('tfDue').value||null };
+  if(editTaskId){ Object.assign(S.tasks.find(x=>x.id===editTaskId), data); }
+  else S.tasks.push({ id:uid(), ...data, done:false, doneAt:null, createdAt:todayKey() });
+  closeSheets(); await saveState(); renderAll();
+}
+
+/* ---------- Idea modal ---------- */
+function openIdeaModal(id){
+  const i = S.ideas.find(x=>x.id===id); if(!i) return;
+  currentIdeaId = id;
+  $('ifTitle').textContent = i.title;
+  $('ifEntries').innerHTML = i.entries.length
+    ? i.entries.slice().reverse().map(e=>'<div class="entry"><div class="ed">'+fmtShort(e.d)+'</div>'+esc(e.text)+'</div>').join('')
+    : '<div class="empty">Nicio notă încă — scrie prima descoperire.</div>';
+  $('ifText').value='';
+  openSheet('shIdea');
+}
+
+/* ---------- Delegare evenimente ---------- */
+document.addEventListener('click', async (ev)=>{
+  const el = ev.target.closest('button, .task, .hrow, .idea, .gdot');
+  if(!el) return;
+  const act = el.dataset ? el.dataset.act : null;
+
+  /* toggle task */
+  if(act==='toggle'){
+    const id = el.closest('.task').dataset.id;
+    const t = S.tasks.find(x=>x.id===id);
+    t.done = !t.done; t.doneAt = t.done ? todayKey() : null;
+    await saveState(); renderAll(); return;
+  }
+  if(act==='edit'){ openTaskModal(el.closest('.task').dataset.id); return; }
+  if(act==='addtask'){ openTaskModal(null, el.closest('.card').dataset.pid); return; }
+  if(act==='delproj'){
+    const pid = el.closest('.card').dataset.pid, p = projById(pid);
+    if(confirm('Ștergi proiectul „'+p.name+'" și toate task-urile lui?')){
+      S.projects = S.projects.filter(x=>x.id!==pid);
+      S.tasks = S.tasks.filter(t=>t.pid!==pid);
+      await saveState(); renderAll();
+    } return;
+  }
+  /* obiceiuri */
+  if(act==='hab'){
+    const hid = el.closest('.hrow').dataset.id, k = todayKey();
+    S.hlog[k] ||= {};
+    S.hlog[k][hid] = !S.hlog[k][hid];
+    if(!S.hlog[k][hid]) delete S.hlog[k][hid];
+    await saveState(); renderAll(); return;
+  }
+  if(act==='delhab'){
+    const hid = el.closest('.hrow').dataset.id, h = S.habits.find(x=>x.id===hid);
+    if(confirm('Elimini obiceiul „'+h.name+'"? Istoricul bifat rămâne în grafice.')){
+      S.habits = S.habits.filter(x=>x.id!==hid);
+      await saveState(); renderAll();
+    } return;
+  }
+  if(el.classList.contains('gdot')){
+    const k = el.dataset.day, hid = el.dataset.hid;
+    S.hlog[k] ||= {};
+    S.hlog[k][hid] = !S.hlog[k][hid];
+    if(!S.hlog[k][hid]) delete S.hlog[k][hid];
+    await saveState(); renderAll(); return;
+  }
+  /* idei */
+  if(el.classList.contains('idea')){ openIdeaModal(el.dataset.id); return; }
+});
+
+/* ---------- Butoane fixe ---------- */
+function bind(){
+  document.querySelectorAll('nav.tabbar button').forEach(b=>b.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabbar button').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('section.tab').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); $('tab-'+b.dataset.tab).classList.add('on');
+    $('fab').style.display = (b.dataset.tab==='azi'||b.dataset.tab==='proiecte') ? 'flex' : 'none';
+    window.scrollTo(0,0);
+  }));
+  $('fab').addEventListener('click', ()=>openTaskModal(null,null));
+  $('ovl').addEventListener('click', closeSheets);
+
+  document.querySelectorAll('#taskFilter button').forEach(b=>b.addEventListener('click', ()=>{
+    filterMode=b.dataset.f;
+    document.querySelectorAll('#taskFilter button').forEach(x=>x.classList.toggle('on',x===b));
+    renderProiecte();
+  }));
+
+  document.querySelectorAll('#tfPrio button').forEach(b=>b.addEventListener('click',()=>setPrio(+b.dataset.v)));
+  document.querySelectorAll('#tfImp button').forEach(b=>b.addEventListener('click',()=>setImp(+b.dataset.v)));
+  $('tfSave').addEventListener('click', saveTask);
+  $('tfDelete').addEventListener('click', async ()=>{
+    if(editTaskId && confirm('Ștergi acest task?')){
+      S.tasks = S.tasks.filter(t=>t.id!==editTaskId);
+      closeSheets(); await saveState(); renderAll();
+    }
+  });
+
+  /* proiect nou */
+  $('btnAddProj').addEventListener('click', ()=>{
+    $('pfName').value='';
+    projColorPick = PROJ_COLORS[S.projects.length % PROJ_COLORS.length];
+    $('pfColors').innerHTML = PROJ_COLORS.map(c=>'<button class="sw'+(c===projColorPick?' on':'')+'" data-c="'+c+'" style="background:'+c+'"></button>').join('');
+    document.querySelectorAll('#pfColors .sw').forEach(b=>b.addEventListener('click',()=>{
+      projColorPick=b.dataset.c;
+      document.querySelectorAll('#pfColors .sw').forEach(x=>x.classList.toggle('on',x===b));
+    }));
+    openSheet('shProj');
+    setTimeout(()=>$('pfName').focus(),250);
+  });
+  $('pfSave').addEventListener('click', async ()=>{
+    const n=$('pfName').value.trim(); if(!n){ $('pfName').focus(); return; }
+    S.projects.push({id:uid(), name:n, color:projColorPick});
+    closeSheets(); await saveState(); renderAll();
+  });
+
+  /* obicei nou */
+  $('habAdd').addEventListener('click', async ()=>{
+    let v=$('habNew').value.trim(); if(!v) return;
+    let emoji='✅', name=v;
+    try{ const m=v.match(/^(\p{Extended_Pictographic}(?:\uFE0F)?)\s*(.+)$/u); if(m){emoji=m[1];name=m[2];} }catch(e){}
+    S.habits.push({id:uid(), emoji, name});
+    $('habNew').value='';
+    await saveState(); renderAll();
+  });
+
+  /* idee nouă */
+  $('ideaAdd').addEventListener('click', async ()=>{
+    const v=$('ideaNew').value.trim(); if(!v) return;
+    S.ideas.push({id:uid(), title:v, createdAt:todayKey(), entries:[], lastPromptAt:null});
+    $('ideaNew').value='';
+    await saveState(); renderIdei();
+  });
+  $('ifSave').addEventListener('click', async ()=>{
+    const i=S.ideas.find(x=>x.id===currentIdeaId); if(!i) return;
+    const txt=$('ifText').value.trim(); if(!txt){ $('ifText').focus(); return; }
+    i.entries.push({d:todayKey(), text:txt});
+    i.lastPromptAt=todayKey();
+    closeSheets(); await saveState(); renderAll();
+  });
+  $('ifDelete').addEventListener('click', async ()=>{
+    const i=S.ideas.find(x=>x.id===currentIdeaId); if(!i) return;
+    if(confirm('Ștergi ideea „'+i.title+'"?')){
+      S.ideas=S.ideas.filter(x=>x.id!==currentIdeaId);
+      closeSheets(); await saveState(); renderAll();
+    }
+  });
+
+  /* prompt idee pe Azi */
+  $('promptLater').addEventListener('click', async ()=>{
+    if(currentPrompt){ const i=S.ideas.find(x=>x.id===currentPrompt.id); if(i) i.lastPromptAt=todayKey(); }
+    currentPrompt=null; await saveState(); renderAzi();
+  });
+  $('promptSave').addEventListener('click', async ()=>{
+    const txt=$('promptText').value.trim(); if(!txt){ $('promptText').focus(); return; }
+    const i=S.ideas.find(x=>x.id===currentPrompt.id);
+    if(i){ i.entries.push({d:todayKey(), text:txt}); i.lastPromptAt=todayKey(); }
+    $('promptText').value=''; currentPrompt=null;
+    await saveState(); renderAll();
+  });
+
+  /* backup */
+  $('btnBackup').addEventListener('click', async ()=>{
+    const json=JSON.stringify(S,null,1);
+    try{ await navigator.clipboard.writeText(json); $('btnBackup').textContent='✓ Copiat în clipboard'; }
+    catch(e){ prompt('Copiază manual:', json); }
+    setTimeout(()=>$('btnBackup').textContent='Copiază backup', 2500);
+  });
+
+  /* import backup */
+  $('btnRestore').addEventListener('click', async ()=>{
+    const raw = prompt('Lipește aici backup-ul JSON copiat din versiunea anterioară:');
+    if(!raw) return;
+    try{
+      const data = JSON.parse(raw);
+      if(!data.projects || !data.habits) throw new Error('format necunoscut');
+      S = data; migrate();
+      await saveState(); renderAll();
+      alert('Datele au fost importate.');
+    }catch(e){ alert('Nu am putut citi backup-ul: '+e.message); }
+  });
+}
+
+/* ---------- Start ---------- */
+(async function init(){
+  await loadState();
+  bind();
+  renderAll();
+  if('serviceWorker' in navigator){
+    try{ navigator.serviceWorker.register('sw.js'); }catch(e){}
+  }
+})();
+</script>
+</body>
+</html>

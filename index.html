@@ -50,6 +50,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:max
 main{padding:0 14px;min-height:62vh}
 section.tab{display:none}
 section.tab.on{display:block;animation:fadein .18s ease}
+#tab-idei.on{display:flex;flex-direction:column;min-height:calc(100dvh - 250px)}
+#tab-idei .card{flex:1}
 @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;position:relative}
 .card .accent{position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:var(--cyan)}
@@ -161,13 +163,13 @@ section.tab.on{display:block;animation:fadein .18s ease}
 nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
   background:rgba(12,17,26,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-top:1px solid var(--line);padding:8px 4px max(10px, var(--sab))}
-.tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--dim);font-size:9.5px;
-  letter-spacing:.06em;text-transform:uppercase;font-weight:600}
-.tabbar button .ic{font-size:19px;line-height:1;filter:grayscale(1);opacity:.55}
+.tabbar button[data-tab]{flex:1;display:flex;align-items:center;justify-content:center;color:var(--dim);
+  font-size:12px;letter-spacing:.02em;font-weight:600;padding:12px 0}
+.tabbar button[data-tab="azi"],.tabbar button[data-tab="proiecte"]{flex:1.5}
 .tabbar button.on{color:var(--cyan)}
-.tabbar button.on .ic{filter:none;opacity:1}
-.tabbar .tabadd{flex:none;flex-direction:row;width:44px;height:44px;border-radius:14px;background:var(--cyan);
-  color:#04222A;font-size:24px;font-weight:700;align-self:center;margin:0 8px 0 2px;justify-content:center}
+.tabbar .tabadd{flex:none;width:48px;height:48px;border-radius:50%;background:var(--cyan);color:#04222A;
+  font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;align-self:center;
+  margin:0 4px;transform:translateY(-8px);box-shadow:0 4px 14px rgba(56,211,232,.35)}
 
 /* ---------- Modals ---------- */
 .ovl{position:fixed;inset:0;background:rgba(4,7,12,.66);backdrop-filter:blur(3px);z-index:90;display:none}
@@ -179,7 +181,8 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
 .sheet h3{font-size:17px;margin-bottom:16px}
 .sheet .grab{width:100%;height:26px;margin:-6px 0 8px;display:flex;align-items:center;justify-content:center;touch-action:none}
 .sheet .grab::after{content:'';width:44px;height:4.5px;border-radius:2.5px;background:var(--line2)}
-.sheet{transition:transform .18s ease}
+.sheet{transition:transform .18s ease;overscroll-behavior:contain}
+body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .entry{padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
 .entry:last-child{border-bottom:none}
 .entry .ed{font-family:var(--mono);font-size:10.5px;color:var(--cyan);margin-bottom:2px}
@@ -392,12 +395,12 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
 </main>
 
 <nav class="tabbar">
-  <button data-tab="azi" class="on"><span class="ic">☀️</span>Azi</button>
-  <button data-tab="proiecte"><span class="ic">📋</span>Proiecte</button>
-  <button data-tab="obiceiuri"><span class="ic">🔁</span>Obiceiuri</button>
-  <button data-tab="idei"><span class="ic">💡</span>Idei</button>
-  <button data-tab="evolutie"><span class="ic">📈</span>Evoluție</button>
+  <button data-tab="azi" class="on">Azi</button>
+  <button data-tab="proiecte">Proiecte</button>
   <button class="tabadd" id="fab" aria-label="Task nou">＋</button>
+  <button data-tab="obiceiuri">Obiceiuri</button>
+  <button data-tab="idei">Idei</button>
+  <button data-tab="evolutie">Evoluție</button>
 </nav>
 
 <!-- ============ MODAL: TASK ============ -->
@@ -459,6 +462,9 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
 <div class="sheet" id="shHabit">
   <div class="grab"></div>
   <h3 id="hfTitle"></h3>
+  <div class="field"><label>Iconiță și denumire</label>
+    <div class="rowflex"><input id="hfEmoji" maxlength="4" style="flex:0 0 64px;text-align:center;font-size:20px"><input id="hfName" placeholder="Denumire obicei"></div>
+  </div>
   <div class="field"><label>Țintă pe săptămână (zile)</label>
     <div class="seg" id="hfTarget">
       <button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button>
@@ -597,6 +603,7 @@ async function loadState(){
     if(v){ S = JSON.parse(v); migrate(); return; }
   }catch(e){ /* stocare indisponibilă */ }
   S = seed();
+  migrate();
   await saveState();
 }
 async function saveState(){
@@ -1019,6 +1026,11 @@ async function endFocus(completed){
   const valid = completed || elapsedS >= total-1 || spent>=10;
   S.focus.push({ id:uid(), taskId:focusRun.taskId, title:focusRun.title,
                  day:todayKey(), mins:focusRun.mins, spent, doneTask:completed, valid });
+  /* sesiunile valide adaugă automat timpul la „ore lucrate" pe task */
+  if(valid && spent>0){
+    const tk = S.tasks.find(x=>x.id===focusRun.taskId);
+    if(tk){ tk.hrs = Math.round(((tk.hrs||0) + spent/60)*10)/10; }
+  }
   if(completed){
     const t = S.tasks.find(x=>x.id===focusRun.taskId);
     if(t && !t.done){ t.done=true; t.doneAt=todayKey(); if(t.rec) spawnRec(t); }
@@ -1036,8 +1048,17 @@ async function endFocus(completed){
 /* =========================================================
    PUPITRU — modale, evenimente, inițializare
    ========================================================= */
-function openSheet(id){ $('ovl').classList.add('open'); $(id).classList.add('open'); }
+let lockY=0;
+function openSheet(id){
+  lockY = window.scrollY || 0;
+  document.body.style.top = (-lockY)+'px';
+  document.body.classList.add('lock');
+  $('ovl').classList.add('open'); $(id).classList.add('open');
+}
 function closeSheets(){
+  document.body.classList.remove('lock');
+  document.body.style.top='';
+  window.scrollTo(0, lockY);
   $('ovl').classList.remove('open');
   ['shTask','shProj','shIdea','shHabit','shFocus','shProjEdit','shReport'].forEach(i=>{ const s=$(i); s.classList.remove('open'); s.style.transform=''; });
   editTaskId=null; currentIdeaId=null;
@@ -1093,7 +1114,8 @@ let editHabitId=null, hfTargetV=7;
 function setHTarget(v){ hfTargetV=v; document.querySelectorAll('#hfTarget button').forEach(b=>b.classList.toggle('on', +b.dataset.v===v)); }
 function openHabitModal(id){
   const hb=S.habits.find(x=>x.id===id); if(!hb) return;
-  editHabitId=id; $('hfTitle').textContent = hb.emoji+' '+hb.name;
+  editHabitId=id; $('hfTitle').textContent = 'Obicei';
+  $('hfEmoji').value = hb.emoji; $('hfName').value = hb.name;
   setHTarget(hb.target||7);
   openSheet('shHabit');
 }
@@ -1313,6 +1335,8 @@ function bind(){
   document.querySelectorAll('#hfTarget button').forEach(b=>b.addEventListener('click',()=>setHTarget(+b.dataset.v)));
   $('hfSave').addEventListener('click', async ()=>{
     const hb=S.habits.find(x=>x.id===editHabitId); if(!hb) return;
+    const em=$('hfEmoji').value.trim(); if(em) hb.emoji=em;
+    const nm=$('hfName').value.trim(); if(nm) hb.name=nm;
     hb.target=hfTargetV; closeSheets(); await saveState(); renderAll();
   });
   $('hfDelete').addEventListener('click', async ()=>{

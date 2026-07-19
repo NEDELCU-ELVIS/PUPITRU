@@ -629,16 +629,10 @@ function weekHours(mon){
   return Math.round(hsum*10)/10;
 }
 function starAverage(){
-  const endYm = todayKey().slice(0,7);
-  let k = ((S.created||todayKey()).slice(0,7))+'-01';
-  let sum=0, n=0;
-  for(let i=0;i<24;i++){
-    const ym=k.slice(0,7);
-    sum += starsFor(monthPoints(ym)); n++;
-    if(ym===endYm) break;
-    k = addMonthsKey(k,1);
-  }
-  return n ? Math.round(sum/n*10)/10 : 0;
+  const done = S.tasks.filter(t=>t.done);
+  if(!done.length) return 0;
+  let s=0; for(const t of done) s+=t.imp;
+  return Math.round(s/done.length*10)/10;
 }
 
 /* ---------- Stocare ---------- */
@@ -820,7 +814,7 @@ function renderAzi(){
   const wh = weekHours(mon);
   $('hrsVal').textContent = wh;
   $('hrsArc').setAttribute('stroke-dashoffset', String(2*Math.PI*36*(1-Math.min(wh/40,1))));
-  $('starAvg').textContent = '★ '+starAverage()+' medie lunară';
+  $('starAvg').textContent = '★ '+starAverage()+' medie task-uri';
   const lb = S.lastBackup;
   const needB = S.tasks.length>3 && (!lb || daysBetween(lb, today) >= 14);
   $('cardBackup').style.display = needB ? 'block' : 'none';

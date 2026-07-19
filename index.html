@@ -26,7 +26,7 @@
   --sab:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.45}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.45;overflow-x:hidden;touch-action:manipulation}
 body{padding-bottom:calc(78px + var(--sab));
   background-image:radial-gradient(700px 380px at 80% -6%,rgba(56,211,232,.09),transparent 60%),
                    radial-gradient(500px 400px at -10% 108%,rgba(240,169,59,.05),transparent 55%);}
@@ -72,6 +72,15 @@ section.tab.on{display:block;animation:fadein .18s ease}
 .ringinfo .delta{font-family:var(--mono);font-size:12px;margin-top:3px}
 .ringinfo .delta.up{color:var(--green)} .ringinfo .delta.down{color:var(--red)} .ringinfo .delta.flat{color:var(--muted)}
 .ringinfo .sub{margin-top:6px}
+.ring2{position:relative;width:84px;height:84px;flex:none}
+.ring2 svg{transform:rotate(-90deg)}
+.ring2 .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring2 .val b{font-family:var(--mono);font-size:17px;color:var(--cyan);line-height:1}
+.ring2 .val span{font-size:8.5px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+.starAvg{position:absolute;top:14px;right:14px;font-family:var(--mono);font-size:11.5px;color:var(--amber)}
+.scorepill .hh{display:block;font-size:10.5px;color:var(--cyan);font-weight:600;margin-top:2px;text-align:right}
+.hpre{display:flex;gap:6px;margin-top:8px}
+.hpre button{flex:1;font-size:12px;padding:7px 0;border:1px solid var(--line2);border-radius:8px;color:var(--muted);background:var(--panel2)}
 
 /* ---------- Tasks ---------- */
 .task{display:flex;align-items:flex-start;gap:11px;padding:11px 2px;border-bottom:1px solid var(--line)}
@@ -141,7 +150,7 @@ section.tab.on{display:block;animation:fadein .18s ease}
 .btn.small{padding:7px 12px;font-size:12.5px;font-weight:500}
 .btn.wide{width:100%}
 .seg{display:flex;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:3px;gap:3px}
-.seg button{flex:1;font-size:13px;padding:8px 4px;border-radius:8px;color:var(--muted);font-weight:500}
+.seg button{flex:1;min-width:0;font-size:12.5px;padding:8px 2px;border-radius:8px;color:var(--muted);font-weight:500;white-space:nowrap}
 .seg button.on{background:var(--cyan-dk);color:var(--cyan);font-weight:600}
 .stars button{font-size:22px;color:var(--line2);padding:2px 3px}
 .stars button.on{color:var(--amber)}
@@ -180,7 +189,7 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
 .sheet h3{font-size:17px;margin-bottom:16px}
 .sheet .grab{width:100%;height:26px;margin:-6px 0 8px;display:flex;align-items:center;justify-content:center;touch-action:none}
 .sheet .grab::after{content:'';width:44px;height:4.5px;border-radius:2.5px;background:var(--line2)}
-.sheet{transition:transform .18s ease;overscroll-behavior:contain}
+.sheet{transition:transform .18s ease;overscroll-behavior:contain;max-width:100vw;overflow-x:hidden}
 body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .entry{padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
 .entry:last-child{border-bottom:none}
@@ -269,9 +278,16 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   <!-- ================= AZI ================= -->
   <section class="tab on" id="tab-azi">
     <button class="focusbtn" id="btnFocus">FOCUS <span class="fcount" id="focusCount"></span></button>
+    <div class="card promptcard" id="cardBackup" style="display:none">
+      <span class="accent"></span>
+      <h2>Siguranța datelor</h2>
+      <div class="sub" id="backupSub" style="margin:-2px 0 10px"></div>
+      <button class="btn small pri" id="backupNow">Copiază backup acum</button>
+    </div>
     <div class="card">
       <span class="accent" style="background:var(--amber)"></span>
       <h2>Scor săptămânal</h2>
+      <div class="starAvg" id="starAvg"></div>
       <div class="ringwrap">
         <div class="ring">
           <svg width="118" height="118" viewBox="0 0 118 118">
@@ -285,6 +301,14 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
           <div class="big" id="ringTarget"></div>
           <div class="delta" id="ringDelta"></div>
           <div class="sub" id="ringMonth" style="margin-top:6px;font-family:var(--mono);font-size:11.5px"></div>
+        </div>
+        <div class="ring2">
+          <svg width="84" height="84" viewBox="0 0 84 84">
+            <circle cx="42" cy="42" r="36" fill="none" stroke="var(--panel2)" stroke-width="7"/>
+            <circle id="hrsArc" cx="42" cy="42" r="36" fill="none" stroke="var(--cyan)" stroke-width="7"
+              stroke-linecap="round" stroke-dasharray="226.19" stroke-dashoffset="226.19"/>
+          </svg>
+          <div class="val"><b id="hrsVal">0</b><span>ore</span></div>
         </div>
       </div>
     </div>
@@ -428,7 +452,11 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   <div class="field"><label>Interval orar (opțional)</label>
     <div class="rowflex"><input type="time" id="tfTimeS"><input type="time" id="tfTimeE"></div>
   </div>
-  <div class="field"><label>Ore lucrate (opțional)</label><input type="number" id="tfHrs" min="0" step="0.5" placeholder="ex: 2.5"></div>
+  <div class="field"><label>Ore lucrate (opțional)</label><input type="number" id="tfHrs" min="0" step="0.25" placeholder="scrie sau alege">
+    <div class="hpre">
+      <button data-h="0.25">¼ h</button><button data-h="0.5">½ h</button><button data-h="1">1 h</button><button data-h="2">2 h</button><button data-h="3">3 h</button>
+    </div>
+  </div>
   <div class="rowflex">
     <button class="btn danger" id="tfDelete" style="display:none">Șterge</button>
     <button class="btn" id="tfSnooze" style="display:none">Mâine</button>
@@ -515,6 +543,7 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   <div class="grab"></div>
   <h3>Raport lunar</h3>
   <div class="field"><label>Luna</label><select id="rpMonth"></select></div>
+  <div class="field"><label>Proiecte incluse (atinge pentru a exclude)</label><div id="rpProjs"></div></div>
   <button class="btn pri wide" id="rpGen">Generează PDF</button>
   <div class="sub" style="margin-top:10px">Se deschide fereastra de imprimare — de acolo: Partajare → Salvează ca PDF.</div>
 </div>
@@ -594,6 +623,23 @@ function spawnRec(t){
                 done:false, doneAt:null, planned:null, triagedOn:null, createdAt:todayKey()});
 }
 function validFocusOn(k){ return S.focus.filter(f=>f.day===k && f.valid).length; }
+function weekHours(mon){
+  const end = addDays(mon,6); let hsum=0;
+  for(const t of S.tasks){ if(t.done && t.hrs && t.doneAt && t.doneAt>=mon && t.doneAt<=end) hsum+=t.hrs; }
+  return Math.round(hsum*10)/10;
+}
+function starAverage(){
+  const endYm = todayKey().slice(0,7);
+  let k = ((S.created||todayKey()).slice(0,7))+'-01';
+  let sum=0, n=0;
+  for(let i=0;i<24;i++){
+    const ym=k.slice(0,7);
+    sum += starsFor(monthPoints(ym)); n++;
+    if(ym===endYm) break;
+    k = addMonthsKey(k,1);
+  }
+  return n ? Math.round(sum/n*10)/10 : 0;
+}
 
 /* ---------- Stocare ---------- */
 async function loadState(){
@@ -614,7 +660,7 @@ function migrate(){
   for(const t of S.tasks){ t.rec ??= null; t.planned ??= null; t.triagedOn ??= null; t.timeS ??= null; t.timeE ??= null; t.hrs ??= null; }
   for(const hb of S.habits){ hb.target ??= 7; }
   S.created ??= todayKey();
-  S.focus ??= []; S.focusTarget ??= 3;
+  S.focus ??= []; S.focusTarget ??= 3; S.lastBackup ??= null;
 }
 function seed(){
   const t = todayKey();
@@ -713,7 +759,8 @@ function projById(id){ return S.projects.find(p=>p.id===id); }
 function renderHeader(){
   const now = new Date();
   $('hdrDate').textContent = WDAYS[now.getDay()]+', '+now.getDate()+' '+MONTHS[now.getMonth()]+' '+now.getFullYear();
-  $('hdrScore').innerHTML = '<small>SĂPT.</small>'+weekScore(mondayOf(todayKey()))+' p';
+  const hmon = mondayOf(todayKey());
+  $('hdrScore').innerHTML = '<small>SĂPT.</small>'+weekScore(hmon)+' p<span class="hh">'+weekHours(hmon)+' h</span>';
 }
 
 /* ---------- Task row (comun) ---------- */
@@ -770,6 +817,16 @@ function renderAzi(){
   else        { el.className='delta flat'; el.textContent='= ca săpt. trecută'; }
   const mp = monthPoints(today.slice(0,7)), stx = starsFor(mp);
   $('ringMonth').innerHTML = 'Luna: '+(stx?'<span class="star">'+'★'.repeat(stx)+'</span>':'—')+' · '+mp+'p';
+  const wh = weekHours(mon);
+  $('hrsVal').textContent = wh;
+  $('hrsArc').setAttribute('stroke-dashoffset', String(2*Math.PI*36*(1-Math.min(wh/40,1))));
+  $('starAvg').textContent = '★ '+starAverage()+' medie lunară';
+  const lb = S.lastBackup;
+  const needB = S.tasks.length>3 && (!lb || daysBetween(lb, today) >= 14);
+  $('cardBackup').style.display = needB ? 'block' : 'none';
+  if(needB) $('backupSub').textContent = lb
+    ? 'Ultimul backup: '+fmtShort(lb)+'. Au trecut '+daysBetween(lb,today)+' zile — copiază și lipește în Notes.'
+    : 'Nu ai făcut încă niciun backup. Copiază și lipește în Notes — 30 de secunde care îți protejează toată munca.';
 
   if(!currentPrompt) currentPrompt = pickPromptIdea();
   if(currentPrompt && S.ideas.some(i=>i.id===currentPrompt.id)){
@@ -1138,6 +1195,7 @@ async function moveProj(dir){
 }
 
 /* ---------- Raport lunar (PDF prin imprimare) ---------- */
+let rpSel = new Set();
 function openReport(){
   const opts=[]; let cur=todayKey();
   for(let i=0;i<6;i++){
@@ -1146,15 +1204,22 @@ function openReport(){
     cur=addMonthsKey(cur,-1);
   }
   $('rpMonth').innerHTML=opts.join('');
+  rpSel = new Set(S.projects.map(p=>p.id));
+  $('rpProjs').innerHTML = S.projects.map(p=>'<div class="fopt sel" data-id="'+p.id+'"><span class="pdot" style="background:'+p.color+'"></span><span class="ptitle">'+esc(p.name)+'</span></div>').join('');
+  document.querySelectorAll('#rpProjs .fopt').forEach(r=>r.addEventListener('click',()=>{
+    const id=r.dataset.id;
+    if(rpSel.has(id)){ rpSel.delete(id); r.classList.remove('sel'); }
+    else { rpSel.add(id); r.classList.add('sel'); }
+  }));
   openSheet('shReport');
 }
 function buildReport(ym){
   const [y,m]=ym.split('-').map(Number);
   const done=S.tasks.filter(t=>t.done && t.doneAt && t.doneAt.slice(0,7)===ym);
   let totalH=0, totalN=0, rows='';
-  const projs=[...S.projects, {id:null,name:'Alte',color:'#999'}];
+  const projs=S.projects.filter(p=>rpSel.has(p.id));
   for(const p of projs){
-    const g=done.filter(t=> p.id ? t.pid===p.id : !projById(t.pid)).sort((a,b)=>a.doneAt<b.doneAt?-1:1);
+    const g=done.filter(t=>t.pid===p.id).sort((a,b)=>a.doneAt<b.doneAt?-1:1);
     if(!g.length) continue;
     let ph=0;
     const trs=g.map(t=>{
@@ -1166,13 +1231,12 @@ function buildReport(ym){
       +'<table><thead><tr><th>Data</th><th>Task</th><th>Interval</th><th style="text-align:right">Ore</th></tr></thead><tbody>'+trs+'</tbody></table>';
   }
   totalH=Math.round(totalH*10)/10;
-  const mp=monthPoints(ym), stx=starsFor(mp);
   $('printArea').innerHTML =
     '<h1>Raport activitate — '+MONTHS[m-1]+' '+y+'</h1>'
     +'<p class="prsub">PUPITRU · generat la '+fmtShort(todayKey())+' '+todayKey().slice(0,4)+'</p>'
-    +(rows||'<p>Niciun task finalizat în această lună.</p>')
+    +(rows||'<p>Niciun task finalizat în această lună pentru proiectele selectate.</p>')
     +'<div class="prtotal"><b>Total: '+totalN+' task-uri finalizate'
-    +(totalH?' · '+totalH+' ore lucrate':'')+' · '+mp+' puncte'+(stx?' · '+'★'.repeat(stx):'')+'</b></div>';
+    +(totalH?' · '+totalH+' ore lucrate':'')+'</b></div>';
 }
 
 /* ---------- Închidere foi prin glisare ---------- */
@@ -1383,11 +1447,24 @@ function bind(){
   /* glisare pentru închidere */
   document.querySelectorAll('.sheet').forEach(makeDraggable);
 
+  /* preseturi ore lucrate */
+  document.querySelectorAll('.hpre button').forEach(b=>b.addEventListener('click',()=>{ $('tfHrs').value=b.dataset.h; }));
+  /* avertizare backup */
+  $('backupNow').addEventListener('click', async ()=>{
+    const json=JSON.stringify(S,null,1);
+    try{ await navigator.clipboard.writeText(json); $('backupNow').textContent='✓ Copiat — lipește în Notes'; }
+    catch(e){ prompt('Copiază manual:', json); }
+    S.lastBackup=todayKey(); await saveState();
+    setTimeout(()=>renderAzi(), 1800);
+  });
+  document.addEventListener('gesturestart', e=>e.preventDefault());
+
   /* backup */
   $('btnBackup').addEventListener('click', async ()=>{
     const json=JSON.stringify(S,null,1);
     try{ await navigator.clipboard.writeText(json); $('btnBackup').textContent='✓ Copiat în clipboard'; }
     catch(e){ prompt('Copiază manual:', json); }
+    S.lastBackup=todayKey(); await saveState(); renderAzi();
     setTimeout(()=>$('btnBackup').textContent='Copiază backup', 2500);
   });
 

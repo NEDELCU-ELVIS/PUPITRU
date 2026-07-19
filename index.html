@@ -38,7 +38,7 @@ h1,h2,h3{margin:0;font-family:var(--cond);letter-spacing:.02em}
 ::placeholder{color:var(--dim)}
 
 /* ---------- Header ---------- */
-header{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 8px}
+header{display:flex;align-items:center;justify-content:space-between;padding:max(48px, calc(14px + env(safe-area-inset-top,0px))) 16px 8px}
 .brand .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.28em;color:var(--cyan);text-transform:uppercase}
 .brand h1{font-size:24px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
 .brand .date{font-size:12.5px;color:var(--muted);margin-top:2px}
@@ -166,6 +166,8 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
 .tabbar button .ic{font-size:19px;line-height:1;filter:grayscale(1);opacity:.55}
 .tabbar button.on{color:var(--cyan)}
 .tabbar button.on .ic{filter:none;opacity:1}
+.tabbar .tabadd{flex:none;flex-direction:row;width:44px;height:44px;border-radius:14px;background:var(--cyan);
+  color:#04222A;font-size:24px;font-weight:700;align-self:center;margin:0 8px 0 2px;justify-content:center}
 
 /* ---------- Modals ---------- */
 .ovl{position:fixed;inset:0;background:rgba(4,7,12,.66);backdrop-filter:blur(3px);z-index:90;display:none}
@@ -179,6 +181,59 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
 .entry{padding:9px 0;border-bottom:1px solid var(--line);font-size:13.5px}
 .entry:last-child{border-bottom:none}
 .entry .ed{font-family:var(--mono);font-size:10.5px;color:var(--cyan);margin-bottom:2px}
+/* ---------- FOCUS ---------- */
+.focusbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-bottom:12px;
+  padding:14px;border:1px solid rgba(56,211,232,.5);border-radius:14px;background:var(--panel);
+  font-family:var(--cond);font-size:17px;font-weight:700;letter-spacing:.32em;color:var(--cyan);text-transform:uppercase}
+.fcount{font-family:var(--mono);font-size:11px;letter-spacing:0;color:var(--muted);font-weight:500}
+.fopt{display:flex;gap:9px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:7px;font-size:14px}
+.fopt.sel{border-color:var(--cyan);background:var(--cyan-dk)}
+.frun{position:fixed;inset:0;background:var(--bg);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:24px}
+.frun.open{display:flex}
+.frun-task{font-size:16px;font-weight:600;text-align:center;max-width:320px}
+.frun-ring{position:relative;width:220px;height:220px}
+.frun-ring svg{transform:rotate(-90deg)}
+.frun-time{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:42px;font-weight:700;color:var(--cyan)}
+.frun-state{font-size:13px;color:var(--amber);min-height:18px;font-family:var(--mono)}
+/* ---------- Briefing ---------- */
+.hero{border-color:var(--line2)}
+.bhead{display:flex;justify-content:space-between;align-items:flex-start}
+.bday{font-family:var(--cond);font-size:27px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--cyan);line-height:1.05}
+.bdate{font-size:13px;color:var(--muted);margin-top:2px}
+.bwx{text-align:right}
+.bwx b{font-family:var(--mono);font-size:21px;color:var(--text);margin-left:6px}
+.bwx .sub{font-family:var(--mono);font-size:10.5px;margin-top:1px}
+.bstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:13px;padding-top:12px;border-top:1px solid var(--line)}
+.bstats>div{text-align:center}
+.bstats span{display:block;font-size:9px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;margin-bottom:3px}
+.bstats b{font-family:var(--mono);font-size:16px;color:var(--text)}
+.bstats small{font-size:10px;color:var(--muted);font-weight:400}
+.star{color:var(--amber)}
+/* ---------- Planul zilei ---------- */
+.pgh{display:flex;gap:8px;align-items:center;margin:11px 0 2px;font-size:13px;font-weight:600}
+.pgh:first-child{margin-top:2px}
+.pgh .proj-count{margin-left:auto}
+.planrow{display:flex;gap:9px;align-items:center;padding:7px 0 7px 4px;border-bottom:1px solid var(--line);font-size:14px}
+.planrow:last-child{border-bottom:none}
+.pdot{width:6px;height:6px;border-radius:2px;flex:none}
+.ptitle{flex:1;min-width:0}
+/* ---------- Triaj ---------- */
+.btn.go{background:var(--green);border-color:var(--green);color:#062912}
+.btn.stop{background:var(--red);border-color:var(--red);color:#2A0A0B}
+#shTriage .rowflex .btn{padding:15px 10px;font-size:15px}
+@media (min-width:415px){
+  html,body{font-size:16px}
+  main{padding:0 16px}
+  .card{padding:16px;border-radius:16px}
+  .chk{width:26px;height:26px;border-radius:9px}
+  .htoggle{width:34px;height:34px}
+  .gdot{width:24px;height:24px;border-radius:7px}
+  .ring{width:132px;height:132px}
+  .ring svg{width:132px;height:132px}
+  .ring .val b{font-size:29px}
+  .ttitle{font-size:15.5px}
+  .hname{font-size:15.5px}
+}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -195,6 +250,7 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
 <main>
   <!-- ================= AZI ================= -->
   <section class="tab on" id="tab-azi">
+    <button class="focusbtn" id="btnFocus">FOCUS <span class="fcount" id="focusCount"></span></button>
     <div class="card">
       <span class="accent" style="background:var(--amber)"></span>
       <h2>Scor săptămânal</h2>
@@ -210,7 +266,7 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
         <div class="ringinfo">
           <div class="big" id="ringTarget"></div>
           <div class="delta" id="ringDelta"></div>
-          <div class="sub" id="ringSub"></div>
+          <div class="sub" id="ringMonth" style="margin-top:6px;font-family:var(--mono);font-size:11.5px"></div>
         </div>
       </div>
     </div>
@@ -219,7 +275,6 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
       <span class="accent"></span>
       <h2>💡 Din bancul de idei</h2>
       <div class="ttitle" id="promptTitle" style="margin-bottom:8px"></div>
-      <div class="sub" style="margin-bottom:10px">Ai apucat să cercetezi? Notează ce ai aflat — chiar și două rânduri.</div>
       <textarea id="promptText" rows="2" placeholder="Ce am aflat…"></textarea>
       <div class="rowflex" style="margin-top:10px">
         <button class="btn small" id="promptLater">Mai târziu</button>
@@ -256,15 +311,15 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
     <div class="card">
       <span class="accent" style="background:var(--green)"></span>
       <h2>Bifează pentru azi</h2>
-      <div id="habToday"></div>
-      <div class="addline">
+      <div class="addline" style="margin-top:0;margin-bottom:10px">
         <input id="habNew" placeholder="Obicei nou (ex: 🧘 Meditație)">
         <button class="btn small" id="habAdd">Adaugă</button>
       </div>
+      <div id="habToday"></div>
     </div>
     <div class="card">
       <span class="accent" style="background:var(--green)"></span>
-      <h2>Ultimele 7 zile <span class="sub" style="text-transform:none;letter-spacing:0"> · atinge ca să corectezi</span></h2>
+      <h2>Ultimele 7 zile</h2>
       <div class="hgrid" id="habGrid"></div>
     </div>
   </section>
@@ -274,7 +329,6 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
     <div class="card">
       <span class="accent" style="background:var(--amber)"></span>
       <h2>Banc de idei</h2>
-      <div class="sub" style="margin:-4px 0 8px">Lucruri de cercetat. Din când în când, PUPITRU te va întreba ce ai aflat.</div>
       <div class="addline" style="margin-top:0;margin-bottom:6px">
         <input id="ideaNew" placeholder="Idee de cercetat…">
         <button class="btn small" id="ideaAdd">Adaugă</button>
@@ -291,9 +345,19 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
       <div class="stat"><b id="stStreak">0</b><span>Serie maximă</span></div>
     </div>
     <div class="card">
+      <span class="accent" style="background:var(--amber)"></span>
+      <h2>Sumar lunar</h2>
+      <div id="mSum"></div>
+    </div>
+    <div class="card">
+      <span class="accent"></span>
+      <h2>Focus <b>— 7 zile</b></h2>
+      <div id="chFocus"></div>
+      <div id="focusStats"></div>
+    </div>
+    <div class="card">
       <span class="accent"></span>
       <h2>Curba de realizare <b>— 30 zile</b></h2>
-      <div class="sub" style="margin:-4px 0 8px">Puncte pe zi: task-uri finalizate × importanță + obiceiuri.</div>
       <div id="chDaily"></div>
     </div>
     <div class="card">
@@ -310,14 +374,13 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
   </section>
 </main>
 
-<button class="fab" id="fab" aria-label="Task nou">＋</button>
-
 <nav class="tabbar">
   <button data-tab="azi" class="on"><span class="ic">☀️</span>Azi</button>
   <button data-tab="proiecte"><span class="ic">📋</span>Proiecte</button>
   <button data-tab="obiceiuri"><span class="ic">🔁</span>Obiceiuri</button>
   <button data-tab="idei"><span class="ic">💡</span>Idei</button>
   <button data-tab="evolutie"><span class="ic">📈</span>Evoluție</button>
+  <button class="tabadd" id="fab" aria-label="Task nou">＋</button>
 </nav>
 
 <!-- ============ MODAL: TASK ============ -->
@@ -338,8 +401,14 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
     </div>
   </div>
   <div class="field"><label>Termen limită</label><input type="date" id="tfDue"></div>
+  <div class="field"><label>Se repetă</label>
+    <div class="seg" id="tfRec">
+      <button data-v="" class="on">Nu</button><button data-v="d">Zilnic</button><button data-v="w">Săptămânal</button><button data-v="m">Lunar</button>
+    </div>
+  </div>
   <div class="rowflex">
     <button class="btn danger" id="tfDelete" style="display:none">Șterge</button>
+    <button class="btn" id="tfSnooze" style="display:none">Mâine</button>
     <button class="btn pri" id="tfSave">Salvează</button>
   </div>
 </div>
@@ -364,6 +433,59 @@ nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
     <button class="btn pri" id="ifSave">Adaugă nota</button>
   </div>
 </div>
+
+<!-- ============ MODAL: OBICEI ============ -->
+<div class="sheet" id="shHabit">
+  <div class="grab"></div>
+  <h3 id="hfTitle"></h3>
+  <div class="field"><label>Țintă pe săptămână (zile)</label>
+    <div class="seg" id="hfTarget">
+      <button data-v="1">1</button><button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button>
+      <button data-v="5">5</button><button data-v="6">6</button><button data-v="7">7</button>
+    </div>
+  </div>
+  <div class="rowflex">
+    <button class="btn danger" id="hfDelete">Elimină</button>
+    <button class="btn pri" id="hfSave">Salvează</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: FOCUS ============ -->
+<div class="sheet" id="shFocus">
+  <div class="grab"></div>
+  <h3>FOCUS</h3>
+  <div class="field"><input id="ffNew" placeholder="Task nou pentru focus…"></div>
+  <div id="ffList" style="margin-bottom:12px"></div>
+  <div class="field"><label>Durată (minute)</label>
+    <div class="seg" id="ffDur">
+      <button data-v="15">15</button><button data-v="25" class="on">25</button><button data-v="45">45</button><button data-v="60">60</button>
+    </div>
+  </div>
+  <div class="field"><label>Ținta zilnică (sesiuni)</label>
+    <div class="seg" id="ffTarget">
+      <button data-v="2">2</button><button data-v="3">3</button><button data-v="4">4</button><button data-v="5">5</button>
+    </div>
+  </div>
+  <button class="btn pri wide" id="ffStart">Începe</button>
+</div>
+
+<!-- ============ ECRAN: FOCUS ACTIV ============ -->
+<div class="frun" id="frun">
+  <div class="frun-task" id="frTask"></div>
+  <div class="frun-ring">
+    <svg width="220" height="220" viewBox="0 0 220 220">
+      <circle cx="110" cy="110" r="100" fill="none" stroke="var(--panel2)" stroke-width="10"/>
+      <circle id="frArc" cx="110" cy="110" r="100" fill="none" stroke="var(--cyan)" stroke-width="10"
+        stroke-linecap="round" stroke-dasharray="628.32" stroke-dashoffset="0"/>
+    </svg>
+    <div class="frun-time" id="frTime"></div>
+  </div>
+  <div class="frun-state" id="frState"></div>
+  <div class="rowflex" style="width:100%;max-width:340px">
+    <button class="btn" id="frStop">Oprește</button>
+    <button class="btn go" id="frDone">Task finalizat</button>
+  </div>
+</div>
 <script>
 /* =========================================================
    PUPITRU — stare, stocare persistentă, utilitare
@@ -373,6 +495,8 @@ let S = null;            // starea aplicației
 let memFallback = null;  // dacă storage nu e disponibil
 
 const PRIO = {1:{l:'Scăzută',m:1}, 2:{l:'Medie',m:1.5}, 3:{l:'Ridicată',m:2}};
+const RECL = {d:'zilnic', w:'săpt.', m:'lunar'};
+const STAR_T = [100,200,350];
 const HABIT_PTS = 2;
 const PROJ_COLORS = ['#38D3E8','#F0A93B','#4ADE80','#60A5FA','#A78BFA','#F472B6'];
 const MONTHS = ['ian','feb','mar','apr','mai','iun','iul','aug','sep','oct','nov','dec'];
@@ -391,6 +515,33 @@ function daysBetween(k1,k2){ return Math.round((parseKey(k2)-parseKey(k1))/86400
 function mondayOf(k){ const d=parseKey(k); const w=(d.getDay()+6)%7; d.setDate(d.getDate()-w); return keyOf(d); }
 function fmtShort(k){ const d=parseKey(k); return d.getDate()+' '+MONTHS[d.getMonth()]; }
 function taskPoints(t){ return Math.round(t.imp * PRIO[t.prio].m * 10)/10; }
+function addMonthsKey(k,n){ const d=parseKey(k); const day=d.getDate(); d.setDate(1); d.setMonth(d.getMonth()+n);
+  const last=new Date(d.getFullYear(),d.getMonth()+1,0).getDate(); d.setDate(Math.min(day,last)); return keyOf(d); }
+function totalPoints(){
+  let p=0;
+  for(const t of S.tasks) if(t.done) p+=taskPoints(t);
+  for(const k in S.hlog) p+=Object.keys(S.hlog[k]).filter(id=>S.hlog[k][id]).length*HABIT_PTS;
+  return Math.round(p);
+}
+function monthPoints(ym){
+  const [y,m]=ym.split('-').map(Number);
+  const days=new Date(y,m,0).getDate(); let p=0;
+  for(let d=1;d<=days;d++) p+=dayPoints(ym+'-'+String(d).padStart(2,'0'));
+  return Math.round(p);
+}
+function starsFor(p){ return p>=STAR_T[2]?3:p>=STAR_T[1]?2:p>=STAR_T[0]?1:0; }
+function weekHabitCount(hid){
+  let n=0, k=mondayOf(todayKey());
+  for(let i=0;i<7;i++){ const d=addDays(k,i); if(d>todayKey()) break; if(S.hlog[d]&&S.hlog[d][hid]) n++; }
+  return n;
+}
+function spawnRec(t){
+  const base = t.due || todayKey();
+  const nd = t.rec==='d' ? addDays(base,1) : t.rec==='w' ? addDays(base,7) : addMonthsKey(base,1);
+  S.tasks.push({id:uid(), pid:t.pid, title:t.title, prio:t.prio, imp:t.imp, due:nd, rec:t.rec,
+                done:false, doneAt:null, planned:null, triagedOn:null, createdAt:todayKey()});
+}
+function validFocusOn(k){ return S.focus.filter(f=>f.day===k && f.valid).length; }
 
 /* ---------- Stocare ---------- */
 async function loadState(){
@@ -407,6 +558,10 @@ async function saveState(){
 }
 function migrate(){
   S.projects ||= []; S.tasks ||= []; S.habits ||= []; S.hlog ||= {}; S.ideas ||= [];
+  for(const t of S.tasks){ t.rec ??= null; t.planned ??= null; t.triagedOn ??= null; }
+  for(const hb of S.habits){ hb.target ??= 7; }
+  S.created ??= todayKey();
+  S.focus ??= []; S.focusTarget ??= 3;
 }
 function seed(){
   const t = todayKey();
@@ -494,7 +649,7 @@ function pickPromptIdea(){
    PUPITRU — randare, grafice, interacțiuni
    ========================================================= */
 let filterMode = 'active';
-let editTaskId = null, tfState = {prio:2, imp:3};
+let editTaskId = null, tfState = {prio:2, imp:3, rec:''};
 let projColorPick = PROJ_COLORS[0];
 let currentPrompt = null, currentIdeaId = null;
 
@@ -523,7 +678,7 @@ function taskRowHTML(t){
     + '<button class="chk" data-act="toggle">✓</button>'
     + '<div class="tbody"><div class="ttitle">'+esc(t.title)+'</div>'
     + '<div class="tmeta">'+projChip+due
-    + '<span class="chip">'+PRIO[t.prio].l+'</span>'+stars
+    + '<span class="chip">'+PRIO[t.prio].l+'</span>'+(t.rec?'<span class="chip">↻ '+RECL[t.rec]+'</span>':'')+stars
     + '<span class="chip pts">'+taskPoints(t)+'p</span></div></div>'
     + '<button class="tmore" data-act="edit">⋯</button></div>';
 }
@@ -531,20 +686,20 @@ function taskRowHTML(t){
 /* ---------- AZI ---------- */
 function renderAzi(){
   const today = todayKey();
+  $('focusCount').textContent = validFocusOn(today)+'/'+(S.focusTarget||3)+' azi';
   const open = S.tasks.filter(t=>!t.done).sort(sortForToday);
   const late = open.filter(t=>t.due && t.due<today).length;
   const forToday = open.filter(t=>t.due===today).length;
   const doneToday = S.tasks.filter(t=>t.done && t.doneAt===today).length;
   $('aziSummary').textContent = open.length
     ? forToday+' pentru azi · '+late+' restante · '+doneToday+' finalizate azi'
-    : 'Nimic în așteptare. Adaugă un task cu ＋.';
+    : 'Niciun task activ.';
   $('aziTasks').innerHTML = open.length
     ? open.slice(0,6).map(taskRowHTML).join('')
-    : '<div class="empty">Zi liberă la task-uri — sau apasă ＋ ca să adaugi.</div>';
+    : '<div class="empty">Niciun task activ.</div>';
 
   renderHabitRows($('aziHabits'), false);
 
-  /* scor + inel */
   const mon = mondayOf(today), prevMon = addDays(mon,-7);
   const cur = weekScore(mon), prev = weekScore(prevMon);
   const target = Math.max(100, Math.round(prev*1.1/5)*5);
@@ -552,16 +707,16 @@ function renderAzi(){
   const C = 2*Math.PI*50;
   $('ringArc').setAttribute('stroke-dashoffset', String(C*(1-pct)));
   $('ringVal').textContent = cur;
-  $('ringTarget').textContent = 'Țintă săptămânală: '+target+' p';
+  $('ringTarget').textContent = 'Țintă: '+target+' p';
   const d = Math.round((cur-prev)*10)/10;
   const el = $('ringDelta');
-  if(prev===0 && cur===0){ el.className='delta flat'; el.textContent='Prima săptămână — hai să punem puncte pe tablă.'; }
-  else if(d>0){ el.className='delta up';   el.textContent='▲ +'+d+' p față de săptămâna trecută'; }
-  else if(d<0){ el.className='delta down'; el.textContent='▼ '+d+' p față de săptămâna trecută'; }
-  else        { el.className='delta flat'; el.textContent='= egal cu săptămâna trecută'; }
-  $('ringSub').textContent = 'Task-uri finalizate × importanță + obiceiuri bifate ('+HABIT_PTS+'p fiecare).';
+  if(prev===0 && cur===0){ el.className='delta flat'; el.textContent='Săptămâna de start.'; }
+  else if(d>0){ el.className='delta up';   el.textContent='▲ +'+d+'p vs. săpt. trecută'; }
+  else if(d<0){ el.className='delta down'; el.textContent='▼ '+d+'p vs. săpt. trecută'; }
+  else        { el.className='delta flat'; el.textContent='= ca săpt. trecută'; }
+  const mp = monthPoints(today.slice(0,7)), stx = starsFor(mp);
+  $('ringMonth').innerHTML = 'Luna: '+(stx?'<span class="star">'+'★'.repeat(stx)+'</span>':'—')+' · '+mp+'p';
 
-  /* prompt idee */
   if(!currentPrompt) currentPrompt = pickPromptIdea();
   if(currentPrompt && S.ideas.some(i=>i.id===currentPrompt.id)){
     $('cardPrompt').style.display='block';
@@ -572,15 +727,16 @@ function renderAzi(){
 /* ---------- Obiceiuri (rânduri comune) ---------- */
 function renderHabitRows(container, withDelete){
   const k = todayKey(), log = S.hlog[k]||{};
-  container.innerHTML = S.habits.length ? S.habits.map(h=>{
-    const on = !!log[h.id], st = habitStreak(h.id);
-    return '<div class="hrow'+(on?' on':'')+'" data-id="'+h.id+'">'
-      + '<span class="hemoji">'+h.emoji+'</span>'
-      + '<span class="hname">'+esc(h.name)+'</span>'
-      + (st>0 ? '<span class="hstreak">🔥 '+st+'z</span>' : '')
+  container.innerHTML = S.habits.length ? S.habits.map(hb=>{
+    const on = !!log[hb.id], st = habitStreak(hb.id);
+    const wk = weekHabitCount(hb.id), tg = hb.target||7, hit = wk>=tg;
+    return '<div class="hrow'+(on?' on':'')+'" data-id="'+hb.id+'">'
+      + '<span class="hemoji">'+hb.emoji+'</span>'
+      + '<span class="hname">'+esc(hb.name)+'</span>'
+      + '<span class="hstreak"'+(hit?' style="color:var(--green)"':'')+'>'+(hit?'✓ ':'')+wk+'/'+tg+(st>0?' · 🔥'+st:'')+'</span>'
       + (withDelete ? '<button class="tmore" data-act="delhab">⋯</button>' : '')
       + '<button class="htoggle" data-act="hab">✓</button></div>';
-  }).join('') : '<div class="empty">Adaugă primul obicei mai jos.</div>';
+  }).join('') : '<div class="empty">Niciun obicei.</div>';
 }
 
 function renderObiceiuri(){
@@ -630,7 +786,7 @@ function renderIdei(){
     const n = i.entries.length;
     return '<div class="idea" data-id="'+i.id+'"><div class="it">'+esc(i.title)+'</div>'
       + '<div class="im">'+(n? n+(n===1?' notă':' note') : 'fără note încă')+' · adăugată '+fmtShort(i.createdAt)+'</div></div>';
-  }).join('') : '<div class="empty">Scrie prima idee de cercetat.</div>';
+  }).join('') : '<div class="empty">Nicio idee încă.</div>';
 }
 
 /* ---------- Grafice SVG ---------- */
@@ -675,35 +831,157 @@ function barChart(container, series, color){
 
 function renderEvolutie(){
   const done = S.tasks.filter(t=>t.done);
-  let totalPts = 0;
-  for(const t of done) totalPts += taskPoints(t);
-  for(const k in S.hlog) totalPts += Object.keys(S.hlog[k]).filter(id=>S.hlog[k][id]).length*HABIT_PTS;
   $('stDone').textContent = done.length;
-  $('stPts').textContent = Math.round(totalPts);
+  $('stPts').textContent = totalPoints();
   $('stStreak').textContent = bestStreak()+'z';
+
+  const ym = todayKey().slice(0,7);
+  const mp = monthPoints(ym), stx = starsFor(mp);
+  const [yy,mm] = ym.split('-').map(Number);
+  let ms = '<div class="pgh" style="margin-top:0">'+MONTHS[mm-1]+' '+yy
+    + '<span class="proj-count" style="color:var(--amber)">'+(stx?'★'.repeat(stx)+' · ':'')+mp+'p</span></div>';
+  let any=false;
+  for(const p of S.projects){
+    const g = done.filter(t=>t.pid===p.id && t.doneAt && t.doneAt.slice(0,7)===ym);
+    if(!g.length) continue; any=true;
+    let pts=0; for(const t of g) pts+=taskPoints(t);
+    ms += '<div class="planrow"><span class="pdot" style="background:'+p.color+'"></span>'
+      + '<span class="ptitle">'+esc(p.name)+'</span><span class="chip">'+g.length+' task</span>'
+      + '<span class="chip pts">'+Math.round(pts)+'p</span></div>';
+  }
+  if(!any) ms += '<div class="empty">Nimic finalizat luna aceasta.</div>';
+  let hist='', cur2 = addMonthsKey(todayKey(),-1);
+  for(let i=0;i<12;i++){
+    const hm = cur2.slice(0,7);
+    if(hm < (S.created||'').slice(0,7)) break;
+    const hp = monthPoints(hm);
+    if(hp>0){
+      const [hy,hmm]=hm.split('-').map(Number);
+      const hs = starsFor(hp);
+      hist += '<div class="planrow"><span class="ptitle" style="color:var(--muted)">'+MONTHS[hmm-1]+' '+hy+'</span>'
+        + '<span class="star">'+(hs?'★'.repeat(hs):'')+'</span><span class="chip">'+hp+'p</span></div>';
+    }
+    cur2 = addMonthsKey(cur2,-1);
+  }
+  if(hist) ms += '<div class="pgh">Istoric</div>'+hist;
+  $('mSum').innerHTML = ms;
 
   const daily=[]; for(let i=29;i>=0;i--){ const k=addDays(todayKey(),-i); daily.push({k, v:dayPoints(k)}); }
   areaChart($('chDaily'), daily, '#38D3E8');
-
   const weeks=[]; const mon0=mondayOf(todayKey());
   for(let i=7;i>=0;i--){ const m=addDays(mon0,-7*i); weeks.push({label:fmtShort(m), v:weekScore(m)}); }
   barChart($('chWeekly'), weeks, '#F0A93B');
-
   const hd=[]; for(let i=29;i>=0;i--){ const k=addDays(todayKey(),-i);
     const l=S.hlog[k]; hd.push({k, v:l?Object.keys(l).filter(id=>l[id]).length:0}); }
-  const rows = S.habits.map(h=>{
-    let c=0; for(let i=0;i<30;i++){ const k=addDays(todayKey(),-i); if(S.hlog[k]&&S.hlog[k][h.id]) c++; }
-    const pct=Math.round(c/30*100);
-    return '<div class="hrow"><span class="hemoji">'+h.emoji+'</span><span class="hname">'+esc(h.name)
+  const rows = S.habits.map(hb=>{
+    let c=0; for(let i=0;i<30;i++){ const k=addDays(todayKey(),-i); if(S.hlog[k]&&S.hlog[k][hb.id]) c++; }
+    const exp = Math.max(1, Math.round((hb.target||7)/7*30));
+    const pct = Math.min(100, Math.round(c/exp*100));
+    return '<div class="hrow"><span class="hemoji">'+hb.emoji+'</span><span class="hname">'+esc(hb.name)
       + '<div class="pbar" style="margin:6px 0 0"><i style="width:'+pct+'%;background:#4ADE80"></i></div></span>'
-      + '<span class="hstreak">'+c+'/30 · 🔥'+habitStreak(h.id)+'</span></div>';
+      + '<span class="hstreak">'+c+'/'+exp+' · 🔥'+habitStreak(hb.id)+'</span></div>';
   }).join('');
   $('chHabits').innerHTML = '<div id="chHabLine"></div>'+rows;
   areaChart($('chHabLine'), hd, '#4ADE80');
+
+  /* focus 7 zile */
+  const fdays=[]; for(let i=6;i>=0;i--){ const k=addDays(todayKey(),-i);
+    const fs=S.focus.filter(f=>f.day===k && f.valid);
+    fdays.push({k, label:WDAYS2[parseKey(k).getDay()], v:fs.reduce((a,f)=>a+f.spent,0), n:fs.length});
+  }
+  barChart($('chFocus'), fdays.map(x=>({label:x.label, v:x.v})), '#38D3E8');
+  const wkS=fdays.reduce((a,x)=>a+x.n,0), wkM=fdays.reduce((a,x)=>a+x.v,0);
+  const wkDone=S.focus.filter(f=>f.doneTask && f.day>=fdays[0].k && f.day<=todayKey()).length;
+  let fx='<div class="bstats" style="border-top:none;padding-top:0;margin-top:2px">'
+    +'<div><span>Sesiuni</span><b>'+wkS+'</b></div>'
+    +'<div><span>Minute</span><b>'+wkM+'</b></div>'
+    +'<div><span>Task în focus</span><b>'+wkDone+'</b></div></div>';
+  const peak=[...fdays].sort((a,b)=>b.v-a.v)[0];
+  if(peak && peak.v>0){
+    const dts=S.tasks.filter(t=>t.done && t.doneAt===peak.k).slice(0,4);
+    fx+='<div class="pgh">Vârf: '+WDAYS[parseKey(peak.k).getDay()]+' — '+peak.n+' sesiuni · '+peak.v+' min</div>'
+      + (dts.length? dts.map(t=>'<div class="planrow"><span class="pdot" style="background:var(--green)"></span><span class="ptitle">'+esc(t.title)+'</span><span class="chip pts">'+taskPoints(t)+'p</span></div>').join('')
+                   : '<div class="empty">Fără task-uri finalizate în acea zi.</div>');
+  }
+  $('focusStats').innerHTML=fx;
 }
 
 function renderAll(){
   renderHeader(); renderAzi(); renderProiecte(); renderObiceiuri(); renderIdei(); renderEvolutie();
+}
+
+/* ---------- FOCUS ---------- */
+let ffSel=null, ffDurV=25, focusRun=null, focusTimer=null;
+function setFfDur(v){ ffDurV=v; document.querySelectorAll('#ffDur button').forEach(b=>b.classList.toggle('on', +b.dataset.v===v)); }
+function setFfTarget(v){ S.focusTarget=v; document.querySelectorAll('#ffTarget button').forEach(b=>b.classList.toggle('on', +b.dataset.v===v)); }
+function openFocus(){
+  ffSel=null; $('ffNew').value='';
+  setFfDur(25); setFfTarget(S.focusTarget||3);
+  const open = S.tasks.filter(t=>!t.done).sort(sortForToday).slice(0,8);
+  $('ffList').innerHTML = open.length ? open.map(t=>{
+    const p=projById(t.pid);
+    return '<div class="fopt" data-id="'+t.id+'"><span class="pdot" style="background:'+(p?p.color:'#55606F')+'"></span>'
+      + '<span class="ptitle">'+esc(t.title)+'</span></div>';
+  }).join('') : '<div class="empty">Niciun task activ — scrie unul mai sus.</div>';
+  document.querySelectorAll('#ffList .fopt').forEach(r=>r.addEventListener('click',()=>{
+    ffSel = ffSel===r.dataset.id ? null : r.dataset.id;
+    document.querySelectorAll('#ffList .fopt').forEach(x=>x.classList.toggle('sel', x.dataset.id===ffSel));
+    if(ffSel) $('ffNew').value='';
+  }));
+  openSheet('shFocus');
+}
+async function startFocus(){
+  let t=null;
+  const nt = $('ffNew').value.trim();
+  if(nt){
+    t = { id:uid(), pid:(S.projects[0]||{}).id||null, title:nt, prio:2, imp:3, due:null, rec:null,
+          done:false, doneAt:null, planned:todayKey(), triagedOn:todayKey(), createdAt:todayKey() };
+    S.tasks.push(t);
+  } else if(ffSel){ t = S.tasks.find(x=>x.id===ffSel); }
+  if(!t){ $('ffNew').focus(); return; }
+  focusRun = { taskId:t.id, title:t.title, mins:ffDurV, start:Date.now() };
+  await saveState();
+  closeSheets();
+  $('frTask').textContent = t.title;
+  $('frState').textContent = '';
+  $('frStop').textContent = 'Oprește';
+  $('frun').classList.add('open');
+  focusTimer = setInterval(focusTick, 500);
+  focusTick();
+}
+function focusTick(){
+  if(!focusRun) return;
+  const total = focusRun.mins*60;
+  const remain = Math.max(0, total - (Date.now()-focusRun.start)/1000);
+  $('frTime').textContent = Math.floor(remain/60)+':'+String(Math.floor(remain%60)).padStart(2,'0');
+  const C = 2*Math.PI*100;
+  $('frArc').setAttribute('stroke-dashoffset', String(C*(1-remain/total)));
+  if(remain<=0){
+    $('frState').textContent = 'Timp încheiat';
+    $('frStop').textContent = 'Închide';
+    if(focusTimer){ clearInterval(focusTimer); focusTimer=null; }
+  }
+}
+async function endFocus(completed){
+  if(!focusRun) return;
+  if(focusTimer){ clearInterval(focusTimer); focusTimer=null; }
+  const total = focusRun.mins*60;
+  const elapsedS = (Date.now()-focusRun.start)/1000;
+  const spent = Math.min(focusRun.mins, Math.round(elapsedS/60));
+  const valid = completed || elapsedS >= total-1 || spent>=10;
+  S.focus.push({ id:uid(), taskId:focusRun.taskId, title:focusRun.title,
+                 day:todayKey(), mins:focusRun.mins, spent, doneTask:completed, valid });
+  if(completed){
+    const t = S.tasks.find(x=>x.id===focusRun.taskId);
+    if(t && !t.done){ t.done=true; t.doneAt=todayKey(); if(t.rec) spawnRec(t); }
+  }
+  if(validFocusOn(todayKey()) >= (S.focusTarget||3)){
+    const fh = S.habits.find(x=>/focus/i.test(x.name));
+    if(fh){ S.hlog[todayKey()] ||= {}; S.hlog[todayKey()][fh.id]=true; }
+  }
+  focusRun=null;
+  $('frun').classList.remove('open');
+  await saveState(); renderAll();
 }
 </script>
 <script>
@@ -713,7 +991,7 @@ function renderAll(){
 function openSheet(id){ $('ovl').classList.add('open'); $(id).classList.add('open'); }
 function closeSheets(){
   $('ovl').classList.remove('open');
-  ['shTask','shProj','shIdea'].forEach(i=>$(i).classList.remove('open'));
+  ['shTask','shProj','shIdea','shHabit','shFocus'].forEach(i=>$(i).classList.remove('open'));
   editTaskId=null; currentIdeaId=null;
 }
 
@@ -723,6 +1001,7 @@ function fillProjSelect(sel){
 }
 function setPrio(v){ tfState.prio=v; document.querySelectorAll('#tfPrio button').forEach(b=>b.classList.toggle('on', +b.dataset.v===v)); }
 function setImp(v){ tfState.imp=v; document.querySelectorAll('#tfImp button').forEach(b=>b.classList.toggle('on', +b.dataset.v<=v)); }
+function setRec(v){ tfState.rec=v; document.querySelectorAll('#tfRec button').forEach(b=>b.classList.toggle('on', b.dataset.v===v)); }
 function openTaskModal(taskId, presetPid){
   if(!S.projects.length){ S.projects.push({id:uid(),name:'General',color:PROJ_COLORS[0]}); }
   editTaskId = taskId||null;
@@ -730,18 +1009,19 @@ function openTaskModal(taskId, presetPid){
   $('shTaskTitle').textContent = t ? 'Editează task' : 'Task nou';
   $('tfTitle').value = t ? t.title : '';
   fillProjSelect(t ? t.pid : (presetPid || S.projects[0].id));
-  setPrio(t ? t.prio : 2); setImp(t ? t.imp : 3);
+  setPrio(t ? t.prio : 2); setImp(t ? t.imp : 3); setRec(t && t.rec ? t.rec : '');
   $('tfDue').value = t && t.due ? t.due : '';
   $('tfDelete').style.display = t ? 'block' : 'none';
+  $('tfSnooze').style.display = t && !t.done ? 'block' : 'none';
   openSheet('shTask');
   if(!t) setTimeout(()=>$('tfTitle').focus(), 250);
 }
 async function saveTask(){
   const title = $('tfTitle').value.trim();
   if(!title){ $('tfTitle').focus(); return; }
-  const data = { title, pid:$('tfProj').value, prio:tfState.prio, imp:tfState.imp, due:$('tfDue').value||null };
+  const data = { title, pid:$('tfProj').value, prio:tfState.prio, imp:tfState.imp, due:$('tfDue').value||null, rec:tfState.rec||null };
   if(editTaskId){ Object.assign(S.tasks.find(x=>x.id===editTaskId), data); }
-  else S.tasks.push({ id:uid(), ...data, done:false, doneAt:null, createdAt:todayKey() });
+  else S.tasks.push({ id:uid(), ...data, done:false, doneAt:null, planned:null, triagedOn:null, createdAt:todayKey() });
   closeSheets(); await saveState(); renderAll();
 }
 
@@ -757,6 +1037,16 @@ function openIdeaModal(id){
   openSheet('shIdea');
 }
 
+/* ---------- Habit modal ---------- */
+let editHabitId=null, hfTargetV=7;
+function setHTarget(v){ hfTargetV=v; document.querySelectorAll('#hfTarget button').forEach(b=>b.classList.toggle('on', +b.dataset.v===v)); }
+function openHabitModal(id){
+  const hb=S.habits.find(x=>x.id===id); if(!hb) return;
+  editHabitId=id; $('hfTitle').textContent = hb.emoji+' '+hb.name;
+  setHTarget(hb.target||7);
+  openSheet('shHabit');
+}
+
 /* ---------- Delegare evenimente ---------- */
 document.addEventListener('click', async (ev)=>{
   const el = ev.target.closest('button, .task, .hrow, .idea, .gdot');
@@ -768,6 +1058,7 @@ document.addEventListener('click', async (ev)=>{
     const id = el.closest('.task').dataset.id;
     const t = S.tasks.find(x=>x.id===id);
     t.done = !t.done; t.doneAt = t.done ? todayKey() : null;
+    if(t.done && t.rec) spawnRec(t);
     await saveState(); renderAll(); return;
   }
   if(act==='edit'){ openTaskModal(el.closest('.task').dataset.id); return; }
@@ -788,13 +1079,7 @@ document.addEventListener('click', async (ev)=>{
     if(!S.hlog[k][hid]) delete S.hlog[k][hid];
     await saveState(); renderAll(); return;
   }
-  if(act==='delhab'){
-    const hid = el.closest('.hrow').dataset.id, h = S.habits.find(x=>x.id===hid);
-    if(confirm('Elimini obiceiul „'+h.name+'"? Istoricul bifat rămâne în grafice.')){
-      S.habits = S.habits.filter(x=>x.id!==hid);
-      await saveState(); renderAll();
-    } return;
-  }
+  if(act==='delhab'){ openHabitModal(el.closest('.hrow').dataset.id); return; }
   if(el.classList.contains('gdot')){
     const k = el.dataset.day, hid = el.dataset.hid;
     S.hlog[k] ||= {};
@@ -808,11 +1093,10 @@ document.addEventListener('click', async (ev)=>{
 
 /* ---------- Butoane fixe ---------- */
 function bind(){
-  document.querySelectorAll('nav.tabbar button').forEach(b=>b.addEventListener('click', ()=>{
-    document.querySelectorAll('nav.tabbar button').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('nav.tabbar button[data-tab]').forEach(b=>b.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabbar button[data-tab]').forEach(x=>x.classList.remove('on'));
     document.querySelectorAll('section.tab').forEach(x=>x.classList.remove('on'));
     b.classList.add('on'); $('tab-'+b.dataset.tab).classList.add('on');
-    $('fab').style.display = (b.dataset.tab==='azi'||b.dataset.tab==='proiecte') ? 'flex' : 'none';
     window.scrollTo(0,0);
   }));
   $('fab').addEventListener('click', ()=>openTaskModal(null,null));
@@ -827,6 +1111,12 @@ function bind(){
   document.querySelectorAll('#tfPrio button').forEach(b=>b.addEventListener('click',()=>setPrio(+b.dataset.v)));
   document.querySelectorAll('#tfImp button').forEach(b=>b.addEventListener('click',()=>setImp(+b.dataset.v)));
   $('tfSave').addEventListener('click', saveTask);
+  $('tfSnooze').addEventListener('click', async ()=>{
+    if(!editTaskId) return;
+    const t=S.tasks.find(x=>x.id===editTaskId); if(!t) return;
+    t.due = addDays(todayKey(),1);
+    closeSheets(); await saveState(); renderAll();
+  });
   $('tfDelete').addEventListener('click', async ()=>{
     if(editTaskId && confirm('Ștergi acest task?')){
       S.tasks = S.tasks.filter(t=>t.id!==editTaskId);
@@ -867,7 +1157,7 @@ function bind(){
     const v=$('ideaNew').value.trim(); if(!v) return;
     S.ideas.push({id:uid(), title:v, createdAt:todayKey(), entries:[], lastPromptAt:null});
     $('ideaNew').value='';
-    await saveState(); renderIdei();
+    await saveState(); renderAll();
   });
   $('ifSave').addEventListener('click', async ()=>{
     const i=S.ideas.find(x=>x.id===currentIdeaId); if(!i) return;
@@ -895,6 +1185,33 @@ function bind(){
     if(i){ i.entries.push({d:todayKey(), text:txt}); i.lastPromptAt=todayKey(); }
     $('promptText').value=''; currentPrompt=null;
     await saveState(); renderAll();
+  });
+
+  document.querySelectorAll('#tfRec button').forEach(b=>b.addEventListener('click',()=>setRec(b.dataset.v)));
+  document.querySelectorAll('#hfTarget button').forEach(b=>b.addEventListener('click',()=>setHTarget(+b.dataset.v)));
+  $('hfSave').addEventListener('click', async ()=>{
+    const hb=S.habits.find(x=>x.id===editHabitId); if(!hb) return;
+    hb.target=hfTargetV; closeSheets(); await saveState(); renderAll();
+  });
+  $('hfDelete').addEventListener('click', async ()=>{
+    const hb=S.habits.find(x=>x.id===editHabitId); if(!hb) return;
+    if(confirm('Elimini obiceiul „'+hb.name+'"?')){
+      S.habits=S.habits.filter(x=>x.id!==editHabitId);
+      closeSheets(); await saveState(); renderAll();
+    }
+  });
+
+  /* focus */
+  $('btnFocus').addEventListener('click', openFocus);
+  document.querySelectorAll('#ffDur button').forEach(b=>b.addEventListener('click',()=>setFfDur(+b.dataset.v)));
+  document.querySelectorAll('#ffTarget button').forEach(b=>b.addEventListener('click',async ()=>{ setFfTarget(+b.dataset.v); await saveState(); renderAll(); }));
+  $('ffStart').addEventListener('click', startFocus);
+  $('ffNew').addEventListener('input', ()=>{ if($('ffNew').value){ ffSel=null;
+    document.querySelectorAll('#ffList .fopt').forEach(x=>x.classList.remove('sel')); } });
+  $('frDone').addEventListener('click', ()=>endFocus(true));
+  $('frStop').addEventListener('click', ()=>{
+    if(focusTimer && !confirm('Oprești sesiunea de focus?')) return;
+    endFocus(false);
   });
 
   /* backup */
@@ -925,7 +1242,7 @@ function bind(){
   bind();
   renderAll();
   if('serviceWorker' in navigator){
-    try{ navigator.serviceWorker.register('sw.js'); }catch(e){}
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
   }
 })();
 </script>

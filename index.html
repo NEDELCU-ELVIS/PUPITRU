@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <title>PUPITRU — Nedelcu</title>
 <meta name="theme-color" content="#0A0F16">
 <link rel="manifest" href="manifest.json">
@@ -1085,7 +1085,6 @@ function openTaskModal(taskId, presetPid){
   $('tfDelete').style.display = t ? 'block' : 'none';
   $('tfSnooze').style.display = t && !t.done ? 'block' : 'none';
   openSheet('shTask');
-  if(!t) setTimeout(()=>$('tfTitle').focus(), 250);
 }
 async function saveTask(){
   const title = $('tfTitle').value.trim();
@@ -1277,7 +1276,6 @@ function bind(){
       document.querySelectorAll('#pfColors .sw').forEach(x=>x.classList.toggle('on',x===b));
     }));
     openSheet('shProj');
-    setTimeout(()=>$('pfName').focus(),250);
   });
   $('pfSave').addEventListener('click', async ()=>{
     const n=$('pfName').value.trim(); if(!n){ $('pfName').focus(); return; }

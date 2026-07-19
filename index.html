@@ -77,7 +77,11 @@ section.tab.on{display:block;animation:fadein .18s ease}
 .ring2 .val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .ring2 .val b{font-family:var(--mono);font-size:17px;color:var(--cyan);line-height:1}
 .ring2 .val span{font-size:8.5px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
-.starAvg{position:absolute;top:14px;right:14px;font-family:var(--mono);font-size:11.5px;color:var(--amber)}
+.starAvg{position:absolute;top:14px;right:14px;display:flex;align-items:center;gap:7px}
+.stars5{position:relative;font-size:15px;line-height:1;letter-spacing:1.5px;display:inline-block}
+.stars5 .sbase{color:var(--line2)}
+.stars5 .sfill{position:absolute;left:0;top:0;color:var(--amber);overflow:hidden;white-space:nowrap;width:0}
+.savg{font-family:var(--mono);font-size:11.5px;color:var(--amber)}
 .scorepill .hh{display:block;font-size:10.5px;color:var(--cyan);font-weight:600;margin-top:2px;text-align:right}
 .hpre{display:flex;gap:6px;margin-top:8px}
 .hpre button{flex:1;font-size:12px;padding:7px 0;border:1px solid var(--line2);border-radius:8px;color:var(--muted);background:var(--panel2)}
@@ -287,7 +291,10 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     <div class="card">
       <span class="accent" style="background:var(--amber)"></span>
       <h2>Scor săptămânal</h2>
-      <div class="starAvg" id="starAvg"></div>
+      <div class="starAvg">
+        <span class="stars5"><span class="sbase">★★★★★</span><span class="sfill" id="starFill">★★★★★</span></span>
+        <span class="savg" id="starNum"></span>
+      </div>
       <div class="ringwrap">
         <div class="ring">
           <svg width="118" height="118" viewBox="0 0 118 118">
@@ -814,7 +821,9 @@ function renderAzi(){
   const wh = weekHours(mon);
   $('hrsVal').textContent = wh;
   $('hrsArc').setAttribute('stroke-dashoffset', String(2*Math.PI*36*(1-Math.min(wh/40,1))));
-  $('starAvg').textContent = '★ '+starAverage()+' medie task-uri';
+  const sAvg = starAverage();
+  $('starFill').style.width = (sAvg/5*100)+'%';
+  $('starNum').textContent = sAvg ? sAvg : '';
   const lb = S.lastBackup;
   const needB = S.tasks.length>3 && (!lb || daysBetween(lb, today) >= 14);
   $('cardBackup').style.display = needB ? 'block' : 'none';

@@ -213,12 +213,15 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .entry:last-child{border-bottom:none}
 .entry .ed{font-family:var(--mono);font-size:10.5px;color:var(--cyan);margin-bottom:2px}
 /* ---------- FOCUS ---------- */
-#btnFocus{position:-webkit-sticky;position:sticky;top:max(4px, env(safe-area-inset-top,0px));z-index:35;
-  background:rgba(13,20,29,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  box-shadow:0 6px 16px rgba(4,7,12,.55)}
-#taskFilter{position:-webkit-sticky;position:sticky;top:max(4px, env(safe-area-inset-top,0px));z-index:35;
-  background:rgba(12,18,27,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
-  box-shadow:0 6px 16px rgba(4,7,12,.55)}
+#btnFocus,#taskFilter{position:-webkit-sticky;position:sticky;
+  top:calc(max(4px, env(safe-area-inset-top,0px)) + 10px);z-index:35;isolation:isolate}
+#btnFocus{background:var(--panel)}
+#taskFilter{background:var(--panel2)}
+#btnFocus::before,#taskFilter::before{content:'';position:absolute;z-index:-1;
+  left:-16px;right:-16px;bottom:-11px;
+  top:calc(-1 * (max(4px, env(safe-area-inset-top,0px)) + 12px));
+  background:var(--bg);
+  box-shadow:0 10px 12px -6px rgba(4,7,12,.9)}
 #tab-azi.on,#tab-proiecte.on{overflow:visible}
 .focusbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-bottom:12px;
   padding:14px;border:1px solid rgba(56,211,232,.5);border-radius:14px;background:var(--panel);
@@ -655,6 +658,13 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     <div class="field"><label id="aiKeyLabel"></label><input id="aiKey" placeholder="lipește cheia aici"></div>
     <div class="sub" id="aiKeyHint" style="margin:-6px 0 10px;font-size:11.5px"></div>
     <button class="btn small pri" id="aiKeySave">Salvează</button>
+    <div class="field" style="margin-top:14px"><label>Memoria asistentului <span id="aiMemCount"></span></label>
+      <div id="aiMemList" style="font-size:12px;color:var(--muted);max-height:120px;overflow-y:auto"></div>
+    </div>
+    <div class="rowflex">
+      <button class="btn small" id="aiMemClear">Șterge memoria</button>
+      <button class="btn small" id="aiChatClear">Șterge conversația</button>
+    </div>
   </div>
 </div>
 
@@ -779,6 +789,7 @@ function migrate(){
   S.aiKey ??= null;
   S.aiProvider ??= 'gemini';
   S.aiKeys ??= {claude:S.aiKey||null, gemini:null};
+  S.aiChat ??= []; S.aiMemory ??= [];
 }
 function seed(){
   const t = todayKey();
@@ -1169,13 +1180,24 @@ function renderAll(){
 
 /* ---------- Asistent ---------- */
 let aiHist=[];
-function aiPush(role, text, extra){
-  aiHist.push({role, content:text});
+function aiBubble(role, text, extra){
   const el=document.createElement('div');
   el.className='aim '+(role==='user'?'u':'a');
   el.innerHTML='<span class="b">'+esc(text)+'</span>'+(extra?'<div class="aiact">'+extra+'</div>':'');
   $('aiMsgs').appendChild(el);
   $('aiMsgs').scrollTop=$('aiMsgs').scrollHeight;
+}
+function aiPush(role, text, extra){
+  aiHist.push({role, content:text});
+  S.aiChat.push({role, content:text, extra:extra||null, at:Date.now()});
+  if(S.aiChat.length>60) S.aiChat=S.aiChat.slice(-60);
+  aiBubble(role, text, extra);
+  saveState();
+}
+function aiRenderHistory(){
+  $('aiMsgs').innerHTML='';
+  aiHist=S.aiChat.map(m=>({role:m.role, content:m.content}));
+  for(const m of S.aiChat) aiBubble(m.role, m.content, m.extra);
 }
 function aiStatus(text, isErr){
   const el=document.createElement('div');
@@ -1203,7 +1225,9 @@ function aiContext(){
   const fw=S.focus.filter(f=>f.valid&&f.day>=mon);
   const lc=locCounts(ym);
   const hab=S.habits.map(hb=>'- '+hb.name+': '+weekHabitCount(hb.id)+'/'+(hb.target||7)+' zile săptămâna asta').join('\n');
-  return 'DATA DE AZI: '+today+' ('+WDAYS[new Date().getDay()]+').\n'
+  const mem=(S.aiMemory||[]).map(x=>'- '+x).join('\n');
+  return (mem?'CE AI REȚINUT DIN DISCUȚIILE ANTERIOARE:\n'+mem+'\n\n':'')
+    +'DATA DE AZI: '+today+' ('+WDAYS[new Date().getDay()]+').\n'
     +'\nSITUAȚIE GENERALĂ:\n- scor săptămâna curentă: '+weekScore(mon)+' puncte (țintă uzuală 100)\n'
     +'- ore lucrate săptămâna curentă: '+weekHours(mon)+'h\n'
     +'- puncte luna curentă: '+monthPoints(ym)+'\n'
@@ -1233,8 +1257,21 @@ const AI_SYS = [
 '- Când ți se cere un plan de atac: ordonează task-urile după termen depășit, apoi prioritate și importanță; propune o ordine concretă pe azi, cu estimări de timp și ce sesiuni de focus ar acoperi treaba. Spune deschis ce nu încape azi și ce trebuie amânat.',
 '- Când constați lucruri din date (multe restanțe, ore puține, obiceiuri neatinse), poți spune asta scurt și onest, fără morală.',
 '',
+'CUM PREZINȚI SITUAȚIILE ȘI PLANURILE (obligatoriu):',
+'- Grupezi pe proiecte. Fiecare proiect are un titlu pe rândul lui, apoi un rând cu numărul de task-uri deschise, apoi câte un rând pentru fiecare task.',
+'- Datele se scriu în format ZZ.LL.AAAA, nu în format ISO.',
+'- Ordonezi proiectele după cât de urgente sunt task-urile lor, iar în interiorul proiectului: întâi restanțele (cele mai vechi primele), apoi termenele de azi, apoi restul; la termene egale, decide importanța (stelele) și prioritatea.',
+'- Model exact de prezentare:',
+'Hală Aveuro',
+'Ai 34 de task-uri deschise',
+'- Centralizator, trebuia închis în 20.07.2026 (RESTANT 5 zile), importanță mare',
+'- Ofertă, trebuie închisă în 30.07.2026, importanță medie',
+'',
+'- Importanța se traduce astfel: 5 stele = foarte mare, 4 = mare, 3 = medie, 2 = mică, 1 = minoră. Menționezi și prioritatea când e Ridicată.',
+'- Când ceri un plan de atac, după enumerare adaugi un bloc separat "Plan pentru azi" cu 3–5 pași numerotați, în ordinea în care trebuie atacate, cu estimarea de timp a fiecăruia și totalul orelor; la final scrii ce nu încape azi și se mută pe mâine.',
+'',
 'FORMAT OBLIGATORIU: răspunzi EXCLUSIV cu un obiect JSON valid, fără text în afara lui, fără blocuri markdown:',
-'{"reply":"mesajul pentru utilizator, poate conține rânduri separate prin \\n","actions":[...]}',
+'{"reply":"mesajul pentru utilizator, cu rânduri separate prin \\n","actions":[...],"memory":["fapte de reținut pe termen lung"]}',
 'Acțiuni permise (folosite doar când e cazul):',
 '{"type":"create","title":"...","project":"nume exact de proiect din listă","prio":1|2|3,"imp":1..5,"due":"AAAA-LL-ZZ","hours":estimare_ore}',
 '{"type":"complete","title":"denumirea task-ului terminat","project":"nume proiect","hours":ore_lucrate}',
@@ -1243,7 +1280,9 @@ const AI_SYS = [
 '- Dacă spune la ce lucrează acum, creezi UN task potrivit, cu estimare realistă pentru lucrări de instalații (o comparativă de preț ~2h, un proiect tehnic de racord ~6–8h, o ofertă ~1–2h) și termen implicit azi. Confirmi în reply ce ai creat și de ce ai estimat așa.',
 '- Dacă spune că a terminat ceva, folosești "complete" cu orele estimate ale muncii; dacă task-ul nu există, îl creezi închis.',
 '- Pentru rezumate, rapoarte, planuri, sfaturi sau întrebări despre situație: doar "reply", fără acțiuni.',
-'- Nu inventa proiecte, task-uri sau cifre care nu apar în context. Dacă ceva lipsește, spui ce nu știi și ceri precizarea.'
+'- Nu inventa proiecte, task-uri sau cifre care nu apar în context. Dacă ceva lipsește, spui ce nu știi și ceri precizarea.',
+'',
+'MEMORIE: în câmpul "memory" pui doar fapte durabile, utile peste săptămâni — cum îl cheamă și ce funcție are, colaboratori și beneficiari recurenți, particularități ale proiectelor, ritmul și preferințele lui de lucru, angajamente asumate. Formulezi scurt, la persoana a treia ("Lucrează cu Claudia la partea de devize"). Nu repeți ce ai reținut deja și nu memorezi detalii trecătoare sau starea zilnică a task-urilor.'
 ].join('\n');
 
 function aiFindTask(title, projName){
@@ -1342,7 +1381,15 @@ async function aiSend(){
     const pend=$('aiPending'); if(pend) pend.remove();
     if(parsed){
       const done=await aiApply(parsed.actions);
+      if(Array.isArray(parsed.memory)){
+        for(const m of parsed.memory){
+          const s=String(m||'').trim();
+          if(s && !S.aiMemory.some(x=>x.toLowerCase()===s.toLowerCase())) S.aiMemory.push(s);
+        }
+        if(S.aiMemory.length>40) S.aiMemory=S.aiMemory.slice(-40);
+      }
       aiPush('assistant', parsed.reply||'Gata.', done);
+      await saveState();
     } else {
       aiPush('assistant', raw||'Nu am putut interpreta răspunsul.');
     }
@@ -1364,15 +1411,21 @@ function setAIProv(v){
     $('aiKeyHint').textContent='De pe console.anthropic.com. Se salvează doar pe telefonul tău. Costul e de ordinul câtorva zeci de cenți pe lună la utilizarea ta.';
   }
 }
+function renderAIMem(){
+  const m=S.aiMemory||[];
+  $('aiMemCount').textContent='('+m.length+')';
+  $('aiMemList').innerHTML = m.length ? m.map(x=>'• '+esc(x)).join('<br>') : '<span style="color:var(--dim)">Încă nimic reținut.</span>';
+}
 function openAISettings(){
   $('aiKeyWrap').style.display='block';
   setAIProv(S.aiProvider||'gemini');
+  renderAIMem();
 }
 function openAI(){
-  if(!aiHist.length){
+  if(S.aiChat.length){ aiRenderHistory(); }
+  else {
     $('aiMsgs').innerHTML='';
-    aiPush('assistant', 'Salut, Nedelcu. Spune-mi la ce lucrezi acum și îți fac task-ul, spune-mi ce ai terminat și îl închid, sau cere-mi situația proiectelor ori un plan de atac pentru azi.');
-    aiHist=[];
+    aiBubble('assistant', 'Salut, Nedelcu. Spune-mi la ce lucrezi acum și îți fac task-ul, spune-mi ce ai terminat și îl închid, sau cere-mi situația proiectelor ori un plan de atac pentru azi.');
   }
   setAIProv(S.aiProvider||'gemini');
   $('aiKeyWrap').style.display = ((S.aiKeys||{})[S.aiProvider||'gemini']) ? 'none' : 'block';
@@ -1975,6 +2028,16 @@ function bind(){
   document.querySelectorAll('#aiProv button').forEach(b=>b.addEventListener('click', async ()=>{
     setAIProv(b.dataset.v); await saveState();
   }));
+  $('aiMemClear').addEventListener('click', async ()=>{
+    if(!confirm('Ștergi tot ce a reținut asistentul despre tine?')) return;
+    S.aiMemory=[]; await saveState(); renderAIMem();
+  });
+  $('aiChatClear').addEventListener('click', async ()=>{
+    if(!confirm('Ștergi conversația? Memoria reținută rămâne.')) return;
+    S.aiChat=[]; aiHist=[]; await saveState();
+    $('aiMsgs').innerHTML='';
+    aiBubble('assistant','Conversație ștearsă. Spune-mi cu ce începem.');
+  });
   $('aiKeySave').addEventListener('click', async ()=>{
     S.aiKeys=S.aiKeys||{}; S.aiKeys[S.aiProvider||'gemini']=$('aiKey').value.trim()||null;
     await saveState();

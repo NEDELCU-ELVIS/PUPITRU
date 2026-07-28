@@ -174,7 +174,7 @@ section.tab.on{display:block;animation:fadein .18s ease}
 .stars button.on{color:var(--amber)}
 .field{margin-bottom:13px}
 .field label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px}
-.swatches{display:flex;gap:9px}
+.swatches{display:flex;gap:9px;flex-wrap:wrap}
 .sw{width:30px;height:30px;border-radius:9px;border:2px solid transparent}
 .sw.on{border-color:#fff}
 .rowflex{display:flex;gap:9px}
@@ -213,6 +213,10 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .entry:last-child{border-bottom:none}
 .entry .ed{font-family:var(--mono);font-size:10.5px;color:var(--cyan);margin-bottom:2px}
 /* ---------- FOCUS ---------- */
+#btnFocus{position:sticky;top:0;z-index:30;background:rgba(13,20,29,.94);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#taskFilter{position:sticky;top:0;z-index:30;background:rgba(10,15,22,.94);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .focusbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-bottom:12px;
   padding:14px;border:1px solid rgba(56,211,232,.5);border-radius:14px;background:var(--panel);
   font-family:var(--cond);font-size:17px;font-weight:700;letter-spacing:.32em;color:var(--cyan);text-transform:uppercase}
@@ -226,6 +230,23 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .frun-ring svg{transform:rotate(-90deg)}
 .frun-time{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:42px;font-weight:700;color:var(--cyan)}
 .frun-state{font-size:13px;color:var(--amber);min-height:18px;font-family:var(--mono)}
+/* ---------- Asistent ---------- */
+.aifab{position:fixed;right:16px;bottom:calc(86px + var(--sab));width:54px;height:54px;border-radius:50%;
+  background:var(--panel);border:1.5px solid var(--cyan);color:var(--cyan);font-family:var(--cond);
+  font-size:17px;font-weight:700;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.45);z-index:45}
+#shAI{display:flex;flex-direction:column;max-height:88vh}
+.aimsgs{overflow-y:auto;max-height:50vh;margin-bottom:12px;-webkit-overflow-scrolling:touch}
+.aim{margin-bottom:11px}
+.aim.u{text-align:right}
+.aim .b{display:inline-block;padding:9px 12px;border-radius:13px;max-width:88%;text-align:left;font-size:14px;line-height:1.45;white-space:pre-wrap}
+.aim.u .b{background:var(--cyan-dk);color:var(--text)}
+.aim.a .b{background:var(--panel2);border:1px solid var(--line)}
+.aiact{font-family:var(--mono);font-size:11.5px;color:var(--green);margin-top:5px;padding-left:2px}
+.aierr{color:var(--red)}
+.airow{display:flex;gap:8px}
+.airow input{flex:1}
+.aikey{margin-top:10px;font-size:11.5px;color:var(--dim)}
 /* ---------- Briefing ---------- */
 .hero{border-color:var(--line2)}
 .bhead{display:flex;justify-content:space-between;align-items:flex-start}
@@ -315,6 +336,14 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   <!-- ================= AZI ================= -->
   <section class="tab on" id="tab-azi">
     <button class="focusbtn" id="btnFocus">FOCUS <span class="fcount" id="focusCount"></span></button>
+    <div class="card">
+      <span class="accent" style="background:var(--cyan)"></span>
+      <h2>Locul de lucru <b id="locCount"></b></h2>
+      <div class="locrow" id="locBtns">
+        <button data-v="office">Birou</button>
+        <button data-v="home">Acasă</button>
+      </div>
+    </div>
     <div class="card promptcard" id="cardBackup" style="display:none">
       <span class="accent"></span>
       <h2>Siguranța datelor</h2>
@@ -377,14 +406,7 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       <div id="aziHabits"></div>
     </div>
 
-    <div class="card">
-      <span class="accent" style="background:var(--cyan)"></span>
-      <h2>Locul de lucru <b id="locCount"></b></h2>
-      <div class="locrow" id="locBtns">
-        <button data-v="office">Birou</button>
-        <button data-v="home">Acasă</button>
-      </div>
-    </div>
+
   </section>
 
   <!-- ================= PROIECTE ================= -->
@@ -471,6 +493,8 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     <div class="rowflex"><button class="btn" id="btnBackup">Copiază backup</button><button class="btn" id="btnRestore">Importă backup</button></div>
   </section>
 </main>
+
+<button class="aifab" id="aiFab" aria-label="Asistent">AI</button>
 
 <nav class="tabbar">
   <button class="tabadd" id="fab" aria-label="Task nou">＋</button>
@@ -594,6 +618,35 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   </div>
 </div>
 
+<!-- ============ MODAL: TASK RESTANT ============ -->
+<div class="sheet" id="shNag">
+  <div class="grab"></div>
+  <div class="sub" id="nagKicker" style="color:var(--red);font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:11px"></div>
+  <h3 id="nagTitle" style="margin:6px 0 8px"></h3>
+  <div class="tmeta" id="nagMeta" style="margin-bottom:12px"></div>
+  <div class="sub" id="nagMsg" style="margin-bottom:18px;font-size:14px;color:var(--text)"></div>
+  <div class="rowflex">
+    <button class="btn" id="nagNo">Respinge</button>
+    <button class="btn go" id="nagYes">Mă ocup · 60 min</button>
+  </div>
+</div>
+
+<!-- ============ MODAL: ASISTENT ============ -->
+<div class="sheet" id="shAI">
+  <div class="grab"></div>
+  <h3>Asistent</h3>
+  <div class="aimsgs" id="aiMsgs"></div>
+  <div class="airow">
+    <input id="aiInput" placeholder="Scrie ce lucrezi sau ce ai terminat…">
+    <button class="btn pri" id="aiSend">Trimite</button>
+  </div>
+  <div class="aikey" id="aiKeyWrap" style="display:none">
+    <div class="field" style="margin:10px 0 0"><label>Cheie API Anthropic (se salvează doar pe telefonul tău)</label>
+      <input id="aiKey" placeholder="sk-ant-..."></div>
+    <button class="btn small" id="aiKeySave" style="margin-top:8px">Salvează cheia</button>
+  </div>
+</div>
+
 <!-- ============ MODAL: RAPORT LUNAR ============ -->
 <div class="sheet" id="shReport">
   <div class="grab"></div>
@@ -635,7 +688,7 @@ const PRIO = {1:{l:'Scăzută',m:1}, 2:{l:'Medie',m:1.5}, 3:{l:'Ridicată',m:2}}
 const RECL = {d:'zilnic', w:'săpt.', m:'lunar'};
 const STAR_T = [100,200,350];
 const HABIT_PTS = 2;
-const PROJ_COLORS = ['#38D3E8','#F0A93B','#4ADE80','#60A5FA','#A78BFA','#F472B6'];
+const PROJ_COLORS = ['#38D3E8','#F0A93B','#4ADE80','#60A5FA','#A78BFA','#F472B6','#FB7185','#2DD4BF','#FACC15','#C084FC','#9BA7B4'];
 const MONTHS = ['ian','feb','mar','apr','mai','iun','iul','aug','sep','oct','nov','dec'];
 const WDAYS  = ['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'];
 const WDAYS2 = ['Du','Lu','Ma','Mi','Jo','Vi','Sâ'];
@@ -710,7 +763,9 @@ function migrate(){
   for(const t of S.tasks){ t.rec ??= null; t.planned ??= null; t.triagedOn ??= null; t.timeS ??= null; t.timeE ??= null; t.hrs ??= null; }
   for(const hb of S.habits){ hb.target ??= 7; }
   S.created ??= todayKey();
-  S.focus ??= []; S.focusTarget ??= 3; S.lastBackup ??= null; S.loc ??= {};
+  S.focus ??= []; S.focusTarget ??= 3; S.lastBackup ??= null; S.loc ??= {}; S.nagUntil ??= null;
+  for(const t of S.tasks){ t.nagAt ??= null; t.est ??= null; }
+  S.aiKey ??= null;
 }
 function seed(){
   const t = todayKey();
@@ -830,7 +885,7 @@ function taskRowHTML(t){
     + '<div class="tbody"><div class="ttitle">'+esc(t.title)+'</div>'
     + '<div class="tmeta">'+projChip+due+(t.timeS?'<span class="chip">'+t.timeS+(t.timeE?'–'+t.timeE:'')+'</span>':'')
     + '<span class="chip">'+PRIO[t.prio].l+'</span>'+(t.rec?'<span class="chip">↻ '+RECL[t.rec]+'</span>':'')+stars
-    + (t.hrs?'<span class="chip">'+t.hrs+'h</span>':'')+'<span class="chip pts">'+taskPoints(t)+'p</span></div></div>'
+    + (t.est&&!t.hrs?'<span class="chip">~'+t.est+'h</span>':'')+(t.hrs?'<span class="chip">'+t.hrs+'h</span>':'')+'<span class="chip pts">'+taskPoints(t)+'p</span></div></div>'
     + '<button class="tmore" data-act="edit">⋯</button></div>';
 }
 
@@ -1099,6 +1154,161 @@ function renderAll(){
   renderHeader(); renderAzi(); renderProiecte(); renderObiceiuri(); renderLoc(); renderIdei(); renderEvolutie();
 }
 
+/* ---------- Asistent ---------- */
+let aiHist=[];
+function aiPush(role, text, extra){
+  aiHist.push({role, content:text});
+  const el=document.createElement('div');
+  el.className='aim '+(role==='user'?'u':'a');
+  el.innerHTML='<span class="b">'+esc(text)+'</span>'+(extra?'<div class="aiact">'+extra+'</div>':'');
+  $('aiMsgs').appendChild(el);
+  $('aiMsgs').scrollTop=$('aiMsgs').scrollHeight;
+}
+function aiStatus(text, isErr){
+  const el=document.createElement('div');
+  el.className='aim a'; el.id='aiPending';
+  el.innerHTML='<span class="b'+(isErr?' aierr':'')+'">'+esc(text)+'</span>';
+  $('aiMsgs').appendChild(el);
+  $('aiMsgs').scrollTop=$('aiMsgs').scrollHeight;
+}
+function aiContext(){
+  const open=S.tasks.filter(t=>!t.done).slice(0,40)
+    .map(t=>{const p=projById(t.pid); return '- '+t.title+' ['+(p?p.name:'fără proiect')+(t.due?', termen '+t.due:'')+']';}).join('\n');
+  return 'Azi este '+todayKey()+'.\nProiectele utilizatorului: '+S.projects.map(p=>p.name).join(', ')
+    +'.\nTask-uri active:\n'+(open||'(niciunul)');
+}
+const AI_SYS = 'Ești asistentul aplicației PUPITRU, folosită de un inginer instalații (MEP) din România care lucrează pe mai multe proiecte simultan. '
+ + 'Răspunzi SCURT, în română, la obiect, fără introduceri politicoase.\n'
+ + 'Răspunzi EXCLUSIV cu un obiect JSON valid, fără text în afara lui și fără blocuri markdown, în forma:\n'
+ + '{"reply":"text scurt pentru utilizator","actions":[...]}\n'
+ + 'Acțiuni permise:\n'
+ + '{"type":"create","title":"...","project":"nume proiect existent","prio":1|2|3,"imp":1..5,"due":"AAAA-LL-ZZ","hours":estimare_ore_numeric}\n'
+ + '{"type":"complete","title":"denumirea task-ului terminat","project":"nume proiect","hours":ore_reale_estimate}\n'
+ + 'Reguli: dacă utilizatorul spune la ce lucrează, creezi UN task potrivit, cu estimare realistă de ore pentru lucrări de instalații și termen (implicit azi). '
+ + 'Dacă spune că a terminat ceva, folosești "complete". Dacă cere rezumat sau plan de atac, răspunzi doar în "reply", cu listă scurtă, fără acțiuni. '
+ + 'Nu inventa proiecte care nu există în listă.';
+
+function aiFindTask(title, projName){
+  const norm=s=>s.toLowerCase().replace(/[^a-zăâîșț0-9 ]/gi,'');
+  const q=norm(title||''); if(!q) return null;
+  const cand=S.tasks.filter(t=>!t.done);
+  let best=null, bestScore=0;
+  for(const t of cand){
+    const n=norm(t.title);
+    const words=q.split(' ').filter(x=>x.length>3);
+    let sc=0;
+    if(n===q) sc=100;
+    else if(n.includes(q)||q.includes(n)) sc=70;
+    else sc=words.filter(wd=>n.includes(wd)).length*15;
+    if(sc>bestScore){ bestScore=sc; best=t; }
+  }
+  return bestScore>=30 ? best : null;
+}
+function aiProj(name){
+  if(!name) return S.projects[0];
+  const n=name.toLowerCase();
+  return S.projects.find(p=>p.name.toLowerCase().includes(n)||n.includes(p.name.toLowerCase())) || S.projects[0];
+}
+async function aiApply(actions){
+  const log=[];
+  for(const a of (actions||[])){
+    if(a.type==='create'){
+      const p=aiProj(a.project);
+      S.tasks.push({id:uid(), pid:p?p.id:null, title:a.title, prio:[1,2,3].includes(a.prio)?a.prio:2,
+        imp:(a.imp>=1&&a.imp<=5)?a.imp:3, due:a.due||todayKey(), rec:null, timeS:null, timeE:null,
+        hrs:null, est:(+a.hours)||null, done:false, doneAt:null, planned:null, triagedOn:null, nagAt:null, createdAt:todayKey()});
+      log.push('+ Task creat: '+a.title+' ('+(p?p.name:'—')+(a.due?', termen '+fmtShort(a.due):'')+((+a.hours)?', estimat '+(+a.hours)+'h':'')+')');
+    } else if(a.type==='complete'){
+      let t=aiFindTask(a.title, a.project);
+      if(!t){
+        const p=aiProj(a.project);
+        t={id:uid(), pid:p?p.id:null, title:a.title, prio:2, imp:3, due:todayKey(), rec:null, timeS:null, timeE:null,
+           hrs:null, est:null, done:false, doneAt:null, planned:null, triagedOn:null, nagAt:null, createdAt:todayKey()};
+        S.tasks.push(t);
+        log.push('+ Task nou (nu exista): '+a.title);
+      }
+      t.done=true; t.doneAt=todayKey();
+      if((+a.hours)) t.hrs=Math.round(((t.hrs||0)+(+a.hours))*10)/10;
+      if(t.rec) spawnRec(t);
+      log.push('✓ Finalizat: '+t.title+((+a.hours)?' · '+(+a.hours)+'h':''));
+    }
+  }
+  if(log.length){ await saveState(); renderAll(); }
+  return log.join('<br>');
+}
+async function aiSend(){
+  const q=$('aiInput').value.trim(); if(!q) return;
+  $('aiInput').value='';
+  aiPush('user', q);
+  aiStatus('…');
+  try{
+    const headers={'Content-Type':'application/json'};
+    if(S.aiKey){ headers['x-api-key']=S.aiKey; headers['anthropic-version']='2023-06-01'; headers['anthropic-dangerous-direct-browser-access']='true'; }
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({
+      model:'claude-sonnet-4-6', max_tokens:1000,
+      system:AI_SYS+'\n\n'+aiContext(),
+      messages:aiHist.slice(-8).map(m=>({role:m.role, content:m.content}))
+    })});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    const raw=(data.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('\n');
+    let parsed=null;
+    try{ parsed=JSON.parse(raw.replace(/```json|```/g,'').trim()); }catch(e){}
+    const pend=$('aiPending'); if(pend) pend.remove();
+    if(parsed){
+      const done=await aiApply(parsed.actions);
+      aiPush('assistant', parsed.reply||'Gata.', done);
+    } else {
+      aiPush('assistant', raw||'Nu am putut interpreta răspunsul.');
+    }
+  }catch(err){
+    const pend=$('aiPending'); if(pend) pend.remove();
+    aiStatus('Asistentul nu a putut răspunde ('+err.message+'). Dacă folosești aplicația instalată de pe GitHub, adaugă mai jos cheia ta API Anthropic.', true);
+    $('aiKeyWrap').style.display='block';
+  }
+}
+function openAI(){
+  if(!aiHist.length){
+    $('aiMsgs').innerHTML='';
+    aiPush('assistant', 'Salut, Nedelcu. Spune-mi la ce lucrezi acum, ce ai terminat, sau cere-mi un plan de atac pentru task-urile deschise.');
+    aiHist=[];
+  }
+  $('aiKey').value=S.aiKey||'';
+  openSheet('shAI');
+}
+
+/* ---------- Restanțe: pop-up de convingere ---------- */
+const NAG_MSG = [
+  'Ai amânat prea mult. O oră de focus acum și scapi de el.',
+  'Trebuie livrat chiar acum — nu mai are rost să stea pe listă.',
+  'Stă de {z} zile peste termen. Azi îl închizi.',
+  'Fiecare zi în plus îl face mai greu. Începe acum, 60 de minute.',
+  'Nu mai negocia cu el. O sesiune de focus și e istorie.',
+  'Termenul a trecut de {z} zile. Hai să-l scoatem de pe listă.'
+];
+let nagTask=null;
+function pickNag(){
+  const today=todayKey();
+  const late = S.tasks.filter(t=>!t.done && t.due && t.due<today && t.nagAt!==today);
+  if(!late.length) return null;
+  return late[Math.floor(Math.random()*late.length)];
+}
+function runNag(){
+  if(focusRun) return;
+  if(S.nagUntil && Date.now() < S.nagUntil) return;
+  const t=pickNag(); if(!t) return;
+  nagTask=t;
+  const z=daysBetween(t.due, todayKey());
+  const p=projById(t.pid);
+  $('nagKicker').textContent='Restant de '+z+(z===1?' zi':' zile');
+  $('nagTitle').textContent=t.title;
+  $('nagMeta').innerHTML=(p?'<span class="chip proj" style="color:'+p.color+';background:'+p.color+'1a">'+esc(p.name)+'</span>':'')
+    +'<span class="chip due late">termen '+fmtShort(t.due)+'</span>'
+    +'<span class="chip">'+PRIO[t.prio].l+'</span><span class="imp">'+'★'.repeat(t.imp)+'</span>';
+  $('nagMsg').textContent = NAG_MSG[Math.floor(Math.random()*NAG_MSG.length)].replace('{z}', z);
+  openSheet('shNag');
+}
+
 /* ---------- FOCUS ---------- */
 let ffSel=null, ffDurV=25, focusRun=null, focusTimer=null;
 function setFfDur(v){ ffDurV=v; document.querySelectorAll('#ffDur button').forEach(b=>b.classList.toggle('on', +b.dataset.v===v)); }
@@ -1128,7 +1338,10 @@ async function startFocus(){
     S.tasks.push(t);
   } else if(ffSel){ t = S.tasks.find(x=>x.id===ffSel); }
   if(!t){ $('ffNew').focus(); return; }
-  focusRun = { taskId:t.id, title:t.title, mins:ffDurV, start:Date.now() };
+  await beginFocus(t, ffDurV);
+}
+async function beginFocus(t, mins){
+  focusRun = { taskId:t.id, title:t.title, mins, start:Date.now() };
   await saveState();
   closeSheets();
   $('frTask').textContent = t.title;
@@ -1194,7 +1407,7 @@ function closeSheets(){
   document.body.style.top='';
   window.scrollTo(0, lockY);
   $('ovl').classList.remove('open');
-  ['shTask','shProj','shIdea','shHabit','shFocus','shProjEdit','shReport'].forEach(i=>{ const s=$(i); s.classList.remove('open'); s.style.transform=''; });
+  ['shTask','shProj','shIdea','shHabit','shFocus','shProjEdit','shReport','shNag','shAI'].forEach(i=>{ const s=$(i); s.classList.remove('open'); s.style.transform=''; });
   editTaskId=null; currentIdeaId=null;
 }
 
@@ -1649,6 +1862,29 @@ function bind(){
   /* glisare pentru închidere */
   document.querySelectorAll('.sheet').forEach(makeDraggable);
 
+  /* asistent */
+  $('aiFab').addEventListener('click', openAI);
+  $('aiSend').addEventListener('click', aiSend);
+  $('aiInput').addEventListener('keydown', e=>{ if(e.key==='Enter') aiSend(); });
+  $('aiKeySave').addEventListener('click', async ()=>{
+    S.aiKey=$('aiKey').value.trim()||null; await saveState();
+    $('aiKeyWrap').style.display='none';
+    aiStatus('Cheie salvată. Încearcă din nou.');
+  });
+
+  /* restanțe */
+  $('nagYes').addEventListener('click', async ()=>{
+    if(!nagTask) return closeSheets();
+    const t=nagTask; nagTask=null;
+    t.nagAt=todayKey(); t.planned=todayKey();
+    await beginFocus(t, 60);
+  });
+  $('nagNo').addEventListener('click', async ()=>{
+    if(nagTask){ nagTask.nagAt=todayKey(); nagTask=null; }
+    S.nagUntil = Date.now() + 2*60*60*1000;
+    closeSheets(); await saveState(); renderAll();
+  });
+
   /* preseturi ore lucrate */
   document.querySelectorAll('.hpre button').forEach(b=>b.addEventListener('click',()=>{ $('tfHrs').value=b.dataset.h; }));
   /* avertizare backup */
@@ -1689,6 +1925,7 @@ function bind(){
   await loadState();
   bind();
   renderAll();
+  setTimeout(runNag, 900);
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('sw.js').catch(()=>{});
   }

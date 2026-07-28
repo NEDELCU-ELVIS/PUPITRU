@@ -26,7 +26,7 @@
   --sab:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.45;overflow-x:hidden;touch-action:manipulation}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.45;overflow-x:clip;touch-action:manipulation}
 body{padding-bottom:calc(78px + var(--sab));
   background-image:radial-gradient(700px 380px at 80% -6%,rgba(56,211,232,.09),transparent 60%),
                    radial-gradient(500px 400px at -10% 108%,rgba(240,169,59,.05),transparent 55%);}
@@ -213,10 +213,13 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .entry:last-child{border-bottom:none}
 .entry .ed{font-family:var(--mono);font-size:10.5px;color:var(--cyan);margin-bottom:2px}
 /* ---------- FOCUS ---------- */
-#btnFocus{position:sticky;top:0;z-index:30;background:rgba(13,20,29,.94);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-#taskFilter{position:sticky;top:0;z-index:30;background:rgba(10,15,22,.94);
-  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#btnFocus{position:-webkit-sticky;position:sticky;top:max(4px, env(safe-area-inset-top,0px));z-index:35;
+  background:rgba(13,20,29,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 6px 16px rgba(4,7,12,.55)}
+#taskFilter{position:-webkit-sticky;position:sticky;top:max(4px, env(safe-area-inset-top,0px));z-index:35;
+  background:rgba(12,18,27,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:0 6px 16px rgba(4,7,12,.55)}
+#tab-azi.on,#tab-proiecte.on{overflow:visible}
 .focusbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-bottom:12px;
   padding:14px;border:1px solid rgba(56,211,232,.5);border-radius:14px;background:var(--panel);
   font-family:var(--cond);font-size:17px;font-weight:700;letter-spacing:.32em;color:var(--cyan);text-transform:uppercase}
@@ -1182,21 +1185,66 @@ function aiStatus(text, isErr){
   $('aiMsgs').scrollTop=$('aiMsgs').scrollHeight;
 }
 function aiContext(){
-  const open=S.tasks.filter(t=>!t.done).slice(0,40)
-    .map(t=>{const p=projById(t.pid); return '- '+t.title+' ['+(p?p.name:'fără proiect')+(t.due?', termen '+t.due:'')+']';}).join('\n');
-  return 'Azi este '+todayKey()+'.\nProiectele utilizatorului: '+S.projects.map(p=>p.name).join(', ')
-    +'.\nTask-uri active:\n'+(open||'(niciunul)');
+  const today=todayKey(), ym=today.slice(0,7), mon=mondayOf(today);
+  const open=S.tasks.filter(t=>!t.done);
+  const late=open.filter(t=>t.due && t.due<today).sort((a,b)=>a.due<b.due?-1:1);
+  const line=t=>{const p=projById(t.pid);
+    return '- "'+t.title+'" | proiect: '+(p?p.name:'—')+' | prioritate: '+PRIO[t.prio].l+' | importanță: '+t.imp+'/5'
+      +(t.due?' | termen: '+t.due+(t.due<today?' (RESTANT de '+daysBetween(t.due,today)+' zile)':t.due===today?' (AZI)':''):' | fără termen')
+      +(t.est?' | estimat '+t.est+'h':'')+(t.hrs?' | lucrat '+t.hrs+'h':'');};
+  const perProj=S.projects.map(p=>{
+    const o=open.filter(t=>t.pid===p.id).length;
+    const dm=S.tasks.filter(t=>t.done&&t.doneAt&&t.doneAt.slice(0,7)===ym&&t.pid===p.id);
+    let hh=0; for(const t of dm) hh+=t.hrs||0;
+    return '- '+p.name+': '+o+' active, '+dm.length+' finalizate luna asta, '+Math.round(hh*10)/10+'h lucrate';
+  }).join('\n');
+  const doneWeek=S.tasks.filter(t=>t.done&&t.doneAt&&t.doneAt>=mon)
+    .map(t=>{const p=projById(t.pid); return '- '+t.title+' ('+(p?p.name:'—')+', '+t.doneAt+(t.hrs?', '+t.hrs+'h':'')+')';}).slice(0,25).join('\n');
+  const fw=S.focus.filter(f=>f.valid&&f.day>=mon);
+  const lc=locCounts(ym);
+  const hab=S.habits.map(hb=>'- '+hb.name+': '+weekHabitCount(hb.id)+'/'+(hb.target||7)+' zile săptămâna asta').join('\n');
+  return 'DATA DE AZI: '+today+' ('+WDAYS[new Date().getDay()]+').\n'
+    +'\nSITUAȚIE GENERALĂ:\n- scor săptămâna curentă: '+weekScore(mon)+' puncte (țintă uzuală 100)\n'
+    +'- ore lucrate săptămâna curentă: '+weekHours(mon)+'h\n'
+    +'- puncte luna curentă: '+monthPoints(ym)+'\n'
+    +'- sesiuni de focus săptămâna asta: '+fw.length+' ('+fw.reduce((a,f)=>a+f.spent,0)+' minute), țintă zilnică '+(S.focusTarget||3)+'\n'
+    +'- pontaj luna curentă: '+lc.o+' zile birou, '+lc.h+' zile acasă\n'
+    +'\nPROIECTE:\n'+(perProj||'(niciunul)')
+    +'\n\nTASK-URI RESTANTE ('+late.length+'):\n'+(late.slice(0,15).map(line).join('\n')||'(niciunul)')
+    +'\n\nTASK-URI ACTIVE ('+open.length+'):\n'+(open.filter(t=>!late.includes(t)).slice(0,30).map(line).join('\n')||'(niciunul)')
+    +'\n\nFINALIZATE SĂPTĂMÂNA ASTA:\n'+(doneWeek||'(niciunul)')
+    +'\n\nOBICEIURI:\n'+(hab||'(niciunul)');
 }
-const AI_SYS = 'Ești asistentul aplicației PUPITRU, folosită de un inginer instalații (MEP) din România care lucrează pe mai multe proiecte simultan. '
- + 'Răspunzi SCURT, în română, la obiect, fără introduceri politicoase.\n'
- + 'Răspunzi EXCLUSIV cu un obiect JSON valid, fără text în afara lui și fără blocuri markdown, în forma:\n'
- + '{"reply":"text scurt pentru utilizator","actions":[...]}\n'
- + 'Acțiuni permise:\n'
- + '{"type":"create","title":"...","project":"nume proiect existent","prio":1|2|3,"imp":1..5,"due":"AAAA-LL-ZZ","hours":estimare_ore_numeric}\n'
- + '{"type":"complete","title":"denumirea task-ului terminat","project":"nume proiect","hours":ore_reale_estimate}\n'
- + 'Reguli: dacă utilizatorul spune la ce lucrează, creezi UN task potrivit, cu estimare realistă de ore pentru lucrări de instalații și termen (implicit azi). '
- + 'Dacă spune că a terminat ceva, folosești "complete". Dacă cere rezumat sau plan de atac, răspunzi doar în "reply", cu listă scurtă, fără acțiuni. '
- + 'Nu inventa proiecte care nu există în listă.';
+const AI_SYS = [
+'Ești asistentul din aplicația PUPITRU — centrul personal de lucru al lui Nedelcu, inginer de instalații (MEP) și administrator al firmei NED EGR CONSTRUCT INSTAL, care conduce simultan mai multe proiecte de construcții în România.',
+'',
+'CUM FUNCȚIONEAZĂ APLICAȚIA (ca să poți explica și corela):',
+'- Task-urile aparțin unui proiect, au prioritate (Scăzută/Medie/Ridicată), importanță 1–5 stele, termen limită, opțional interval orar și ore lucrate.',
+'- Punctajul: fiecare task finalizat aduce importanță × multiplicator de prioritate (1 / 1,5 / 2), iar fiecare obicei bifat aduce 2 puncte. Scorul se adună săptămânal și lunar; stelele lunare se obțin la 100, 200 și 350 de puncte.',
+'- FOCUS: sesiuni cronometrate (15/25/45/60 min). O sesiune validă adaugă automat minutele la orele lucrate ale task-ului. Există o țintă zilnică de sesiuni.',
+'- Pontaj: fiecare zi se marchează Birou sau Acasă.',
+'- Raportul lunar PDF cuprinde task-urile finalizate, orele pe proiect, prezența și graficele — folosit la facturare către beneficiari.',
+'',
+'CUM VORBEȘTI:',
+'- Română naturală, la persoana a doua, ca un coleg competent care cunoaște șantierul și proiectarea de instalații. Direct, fără formule politicoase și fără entuziasm artificial.',
+'- Concret și specific: folosește cifrele reale din context (ore, zile de întârziere, puncte, denumiri de proiecte), nu generalități.',
+'- Structurează răspunsurile lungi pe rânduri separate, cu liniuțe sau numerotare. Poți folosi rânduri goale între secțiuni. Fără markdown cu asteriscuri.',
+'- Când ți se cere un raport sau o situație: dă cifrele grupate pe proiecte, evidențiază restanțele cu vechimea lor și încheie cu o concluzie de o frază.',
+'- Când ți se cere un plan de atac: ordonează task-urile după termen depășit, apoi prioritate și importanță; propune o ordine concretă pe azi, cu estimări de timp și ce sesiuni de focus ar acoperi treaba. Spune deschis ce nu încape azi și ce trebuie amânat.',
+'- Când constați lucruri din date (multe restanțe, ore puține, obiceiuri neatinse), poți spune asta scurt și onest, fără morală.',
+'',
+'FORMAT OBLIGATORIU: răspunzi EXCLUSIV cu un obiect JSON valid, fără text în afara lui, fără blocuri markdown:',
+'{"reply":"mesajul pentru utilizator, poate conține rânduri separate prin \\n","actions":[...]}',
+'Acțiuni permise (folosite doar când e cazul):',
+'{"type":"create","title":"...","project":"nume exact de proiect din listă","prio":1|2|3,"imp":1..5,"due":"AAAA-LL-ZZ","hours":estimare_ore}',
+'{"type":"complete","title":"denumirea task-ului terminat","project":"nume proiect","hours":ore_lucrate}',
+'',
+'REGULI:',
+'- Dacă spune la ce lucrează acum, creezi UN task potrivit, cu estimare realistă pentru lucrări de instalații (o comparativă de preț ~2h, un proiect tehnic de racord ~6–8h, o ofertă ~1–2h) și termen implicit azi. Confirmi în reply ce ai creat și de ce ai estimat așa.',
+'- Dacă spune că a terminat ceva, folosești "complete" cu orele estimate ale muncii; dacă task-ul nu există, îl creezi închis.',
+'- Pentru rezumate, rapoarte, planuri, sfaturi sau întrebări despre situație: doar "reply", fără acțiuni.',
+'- Nu inventa proiecte, task-uri sau cifre care nu apar în context. Dacă ceva lipsește, spui ce nu știi și ceri precizarea.'
+].join('\n');
 
 function aiFindTask(title, projName){
   const norm=s=>s.toLowerCase().replace(/[^a-zăâîșț0-9 ]/gi,'');
@@ -1252,7 +1300,7 @@ async function callGemini(sys, msgs){
   if(!key) throw new Error('lipsește cheia Gemini');
   const body={ system_instruction:{parts:[{text:sys}]},
     contents:msgs.map(m=>({role:m.role==='assistant'?'model':'user', parts:[{text:m.content}]})),
-    generationConfig:{temperature:0.3, maxOutputTokens:1000, responseMimeType:'application/json'} };
+    generationConfig:{temperature:0.55, maxOutputTokens:2000, responseMimeType:'application/json'} };
   let lastErr=null;
   for(const mdl of GEM_MODELS){
     try{
@@ -1273,7 +1321,7 @@ async function callClaude(sys, msgs){
   const key=(S.aiKeys&&S.aiKeys.claude)||null;
   if(key){ headers['x-api-key']=key; headers['anthropic-version']='2023-06-01'; headers['anthropic-dangerous-direct-browser-access']='true'; }
   const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({
-    model:'claude-sonnet-4-6', max_tokens:1000, system:sys,
+    model:'claude-sonnet-4-6', max_tokens:2000, system:sys,
     messages:msgs.map(m=>({role:m.role, content:m.content}))
   })});
   if(!res.ok) throw new Error('HTTP '+res.status);
@@ -1323,7 +1371,7 @@ function openAISettings(){
 function openAI(){
   if(!aiHist.length){
     $('aiMsgs').innerHTML='';
-    aiPush('assistant', 'Salut, Nedelcu. Spune-mi la ce lucrezi acum, ce ai terminat, sau cere-mi un plan de atac pentru task-urile deschise.');
+    aiPush('assistant', 'Salut, Nedelcu. Spune-mi la ce lucrezi acum și îți fac task-ul, spune-mi ce ai terminat și îl închid, sau cere-mi situația proiectelor ori un plan de atac pentru azi.');
     aiHist=[];
   }
   setAIProv(S.aiProvider||'gemini');

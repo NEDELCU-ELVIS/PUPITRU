@@ -123,6 +123,20 @@ section.tab.on{display:block;animation:fadein .18s ease}
   display:flex;align-items:center;justify-content:center;color:transparent;font-size:15px;transition:.15s}
 .hrow.on .htoggle{background:var(--green);border-color:var(--green);color:#06240F}
 .hgrid{display:grid;grid-template-columns:auto repeat(7,1fr);gap:6px 4px;align-items:center;font-size:11px}
+.locrow{display:flex;gap:9px;margin-top:2px}
+.locrow button{flex:1;padding:13px 6px;border:1px solid var(--line2);border-radius:11px;background:var(--panel2);
+  color:var(--muted);font-size:14.5px;font-weight:600}
+.locrow button.on[data-v="office"]{border-color:var(--cyan);background:var(--cyan-dk);color:var(--cyan)}
+.locrow button.on[data-v="home"]{border-color:var(--amber);background:rgba(240,169,59,.15);color:var(--amber)}
+.mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:4px}
+.mgrid .mh{font-family:var(--mono);font-size:9px;color:var(--dim);text-align:center;text-transform:uppercase}
+.mcell{aspect-ratio:1;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--dim);
+  font-family:var(--mono);font-size:11px;display:flex;align-items:center;justify-content:center;padding:0}
+.mcell.office{background:var(--cyan-dk);border-color:var(--cyan);color:var(--cyan);font-weight:700}
+.mcell.home{background:rgba(240,169,59,.15);border-color:var(--amber);color:var(--amber);font-weight:700}
+.mcell.void{border:none;background:none}
+.mlegend{display:flex;gap:14px;margin-top:10px;font-size:12px;color:var(--muted)}
+.mlegend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 .hgrid .gh{font-family:var(--mono);font-size:9.5px;color:var(--dim);text-align:center;text-transform:uppercase}
 .hgrid .gl{color:var(--muted);font-size:15px;text-align:center}
 .gdot{width:20px;height:20px;margin:0 auto;border-radius:6px;background:var(--panel2);border:1px solid var(--line);transition:.12s}
@@ -264,6 +278,17 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   #printArea th{text-align:left;color:#555;font-weight:600;padding:3px 4px;border-bottom:1px solid #999}
   #printArea td{padding:4px;border-bottom:0.5px solid #bbb;vertical-align:top}
   #printArea .prtotal{margin-top:16px;font-size:13px;border-top:2px solid #000;padding-top:8px}
+  #printArea .chartblock{margin:10px 0 18px;page-break-inside:avoid}
+  #printArea svg{width:100%;height:auto;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #printArea table{page-break-inside:auto}
+  #printArea tr{page-break-inside:avoid}
+  #printArea .prlegend{font-size:10px;color:#555;margin-top:2px}
+  #printArea .prloc{display:flex;flex-wrap:wrap;gap:3px;margin:6px 0 4px}
+  #printArea .prloc span{width:26px;height:24px;border:0.8px solid #999;border-radius:4px;font-size:9px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+  #printArea .prloc span b{font-size:10px}
+  #printArea .prloc span.o{background:#ddd;border-color:#333}
+  #printArea .prloc span.h{background:#f4f4f4}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
@@ -343,6 +368,15 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       <h2>Obiceiurile de azi</h2>
       <div id="aziHabits"></div>
     </div>
+
+    <div class="card">
+      <span class="accent" style="background:var(--cyan)"></span>
+      <h2>Locul de lucru <b id="locCount"></b></h2>
+      <div class="locrow" id="locBtns">
+        <button data-v="office">Birou</button>
+        <button data-v="home">Acasă</button>
+      </div>
+    </div>
   </section>
 
   <!-- ================= PROIECTE ================= -->
@@ -370,6 +404,12 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       <span class="accent" style="background:var(--green)"></span>
       <h2>Ultimele 7 zile</h2>
       <div class="hgrid" id="habGrid"></div>
+    </div>
+    <div class="card">
+      <span class="accent" style="background:var(--cyan)"></span>
+      <h2>Prezență lunară <b id="locMonthCount"></b></h2>
+      <div class="mgrid" id="locGrid"></div>
+      <div class="mlegend"><span><i style="background:var(--cyan)"></i>Birou</span><span><i style="background:var(--amber)"></i>Acasă</span><span class="sub">atinge o zi pentru a schimba</span></div>
     </div>
   </section>
 
@@ -451,6 +491,7 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     </div>
   </div>
   <div class="field"><label>Termen limită</label><input type="date" id="tfDue"></div>
+  <div class="field" id="tfDoneWrap" style="display:none"><label>Data efectuării</label><input type="date" id="tfDoneAt"></div>
   <div class="field"><label>Se repetă</label>
     <div class="seg" id="tfRec">
       <button data-v="" class="on">Nu</button><button data-v="d">Zilnic</button><button data-v="w">Săptămânal</button><button data-v="m">Lunar</button>
@@ -661,7 +702,7 @@ function migrate(){
   for(const t of S.tasks){ t.rec ??= null; t.planned ??= null; t.triagedOn ??= null; t.timeS ??= null; t.timeE ??= null; t.hrs ??= null; }
   for(const hb of S.habits){ hb.target ??= 7; }
   S.created ??= todayKey();
-  S.focus ??= []; S.focusTarget ??= 3; S.lastBackup ??= null;
+  S.focus ??= []; S.focusTarget ??= 3; S.lastBackup ??= null; S.loc ??= {};
 }
 function seed(){
   const t = todayKey();
@@ -836,6 +877,32 @@ function renderAzi(){
     $('cardPrompt').style.display='block';
     $('promptTitle').textContent = currentPrompt.title;
   } else { $('cardPrompt').style.display='none'; currentPrompt=null; }
+}
+
+/* ---------- Locul de lucru ---------- */
+function locCounts(ym){
+  let o=0,hm=0;
+  for(const k in S.loc){ if(k.slice(0,7)!==ym) continue; if(S.loc[k]==='office') o++; else if(S.loc[k]==='home') hm++; }
+  return {o, h:hm};
+}
+function renderLoc(){
+  const t=todayKey(), cur=S.loc[t]||null, ym=t.slice(0,7);
+  document.querySelectorAll('#locBtns button').forEach(b=>b.classList.toggle('on', b.dataset.v===cur));
+  const c=locCounts(ym);
+  const lbl='Birou '+c.o+' · Acasă '+c.h;
+  $('locCount').textContent=lbl; $('locMonthCount').textContent=lbl;
+
+  const [y,m]=ym.split('-').map(Number);
+  const nd=new Date(y,m,0).getDate();
+  const lead=(new Date(y,m-1,1).getDay()+6)%7;
+  let g=['Lu','Ma','Mi','Jo','Vi','Sâ','Du'].map(x=>'<div class="mh">'+x+'</div>').join('');
+  for(let i=0;i<lead;i++) g+='<div class="mcell void"></div>';
+  for(let dnum=1;dnum<=nd;dnum++){
+    const k=ym+'-'+String(dnum).padStart(2,'0');
+    const v=S.loc[k]||'';
+    g+='<button class="mcell '+(v||'')+'" data-loc="'+k+'">'+dnum+'</button>';
+  }
+  $('locGrid').innerHTML=g;
 }
 
 /* ---------- Obiceiuri (rânduri comune) ---------- */
@@ -1021,7 +1088,7 @@ function renderEvolutie(){
 }
 
 function renderAll(){
-  renderHeader(); renderAzi(); renderProiecte(); renderObiceiuri(); renderIdei(); renderEvolutie();
+  renderHeader(); renderAzi(); renderProiecte(); renderObiceiuri(); renderLoc(); renderIdei(); renderEvolutie();
 }
 
 /* ---------- FOCUS ---------- */
@@ -1143,6 +1210,8 @@ function openTaskModal(taskId, presetPid){
   $('tfTimeE').value = t && t.timeE ? t.timeE : '';
   $('tfHrs').value = t && t.hrs ? t.hrs : '';
   $('tfDelete').style.display = t ? 'block' : 'none';
+  $('tfDoneWrap').style.display = t && t.done ? 'block' : 'none';
+  $('tfDoneAt').value = t && t.doneAt ? t.doneAt : '';
   $('tfSnooze').style.display = t && !t.done ? 'block' : 'none';
   openSheet('shTask');
 }
@@ -1150,7 +1219,11 @@ async function saveTask(){
   const title = $('tfTitle').value.trim();
   if(!title){ $('tfTitle').focus(); return; }
   const data = { title, pid:$('tfProj').value, prio:tfState.prio, imp:tfState.imp, due:$('tfDue').value||null, rec:tfState.rec||null, timeS:$('tfTimeS').value||null, timeE:$('tfTimeE').value||null, hrs:parseFloat($('tfHrs').value)||null };
-  if(editTaskId){ Object.assign(S.tasks.find(x=>x.id===editTaskId), data); }
+  if(editTaskId){
+    const tk = S.tasks.find(x=>x.id===editTaskId);
+    Object.assign(tk, data);
+    if(tk.done && $('tfDoneAt').value) tk.doneAt = $('tfDoneAt').value;
+  }
   else S.tasks.push({ id:uid(), ...data, done:false, doneAt:null, planned:null, triagedOn:null, createdAt:todayKey() });
   closeSheets(); await saveState(); renderAll();
 }
@@ -1218,26 +1291,114 @@ function openReport(){
 }
 function buildReport(ym){
   const [y,m]=ym.split('-').map(Number);
-  const done=S.tasks.filter(t=>t.done && t.doneAt && t.doneAt.slice(0,7)===ym);
-  let totalH=0, totalN=0, rows='';
   const projs=S.projects.filter(p=>rpSel.has(p.id));
-  for(const p of projs){
-    const g=done.filter(t=>t.pid===p.id).sort((a,b)=>a.doneAt<b.doneAt?-1:1);
-    if(!g.length) continue;
-    let ph=0;
-    const trs=g.map(t=>{
-      const hr=t.hrs||0; ph+=hr;
-      return '<tr><td>'+fmtShort(t.doneAt)+'</td><td>'+esc(t.title)+'</td><td>'+(t.timeS?t.timeS+(t.timeE?'–'+t.timeE:''):'')+'</td><td style="text-align:right">'+(hr?hr+' h':'—')+'</td></tr>';
-    }).join('');
-    ph=Math.round(ph*10)/10; totalH+=ph; totalN+=g.length;
-    rows+='<h3>'+esc(p.name)+' <span>'+g.length+' task-uri'+(ph?' · '+ph+' h':'')+'</span></h3>'
-      +'<table><thead><tr><th>Data</th><th>Task</th><th>Interval</th><th style="text-align:right">Ore</th></tr></thead><tbody>'+trs+'</tbody></table>';
+  const done=S.tasks.filter(t=>t.done && t.doneAt && t.doneAt.slice(0,7)===ym && projs.some(p=>p.id===t.pid));
+  const stats=projs.map(p=>{
+    const g=done.filter(t=>t.pid===p.id).sort((a,b)=>(a.doneAt+(a.createdAt||''))<(b.doneAt+(b.createdAt||''))?-1:1);
+    let hh=0; for(const t of g) hh+=t.hrs||0;
+    return {p, g, n:g.length, h:Math.round(hh*10)/10};
+  }).filter(s=>s.n>0);
+  const totalN=stats.reduce((a,s)=>a+s.n,0);
+  const totalH=Math.round(stats.reduce((a,s)=>a+s.h,0)*10)/10;
+
+  /* --- 1. Bare sumar: ore pe proiect --- */
+  let bars='';
+  if(stats.length){
+    const W=680, LBL=170, rowH=30, PADR=54;
+    const maxH=Math.max(...stats.map(s=>s.h), 0.5);
+    const H=stats.length*rowH+8;
+    let g='';
+    stats.forEach((s,i)=>{
+      const yy=i*rowH+4, bw=Math.max(2,(s.h/maxH)*(W-LBL-PADR));
+      g+='<text x="0" y="'+(yy+14)+'" font-size="11" fill="#000">'+esc(s.p.name)+'</text>'
+       + '<rect x="'+LBL+'" y="'+yy+'" width="'+bw.toFixed(1)+'" height="17" fill="#333"/>'
+       + '<text x="'+(LBL+bw+6)+'" y="'+(yy+13)+'" font-size="10.5" fill="#000">'+s.h+' h · '+s.n+' task</text>';
+    });
+    bars='<div class="chartblock"><h3>Ore lucrate pe proiect</h3><svg viewBox="0 0 '+W+' '+H+'">'+g+'</svg></div>';
   }
-  totalH=Math.round(totalH*10)/10;
+
+  /* --- 2. Desfășurător: data notării + data efectuării --- */
+  let rows='';
+  for(const s of stats){
+    const trs=s.g.map(t=>'<tr><td>'+(t.createdAt?fmtShort(t.createdAt):'—')+'</td><td>'+fmtShort(t.doneAt)+'</td><td>'+esc(t.title)
+      +'</td><td>'+(t.timeS?t.timeS+(t.timeE?'–'+t.timeE:''):'')+'</td><td style="text-align:right">'+(t.hrs?t.hrs+' h':'—')+'</td></tr>').join('');
+    rows+='<h3>'+esc(s.p.name)+' <span>'+s.n+' task-uri'+(s.h?' · '+s.h+' h':'')+'</span></h3>'
+      +'<table><thead><tr><th>Notat</th><th>Efectuat</th><th>Task</th><th>Interval</th><th style="text-align:right">Ore</th></tr></thead><tbody>'+trs+'</tbody></table>';
+  }
+
+  /* --- 3. Grafic: task-uri și ore pe proiect --- */
+  let chP='';
+  if(stats.length){
+    const W=680, PB=42, PT=16, H=210;
+    const maxH=Math.max(...stats.map(s=>s.h),1), maxN=Math.max(...stats.map(s=>s.n),1);
+    const slot=W/stats.length, bw=Math.min(38, slot*0.3);
+    let g='';
+    stats.forEach((s,i)=>{
+      const cxx=i*slot+slot/2;
+      const h1=(s.h/maxH)*(H-PT-PB), h2=(s.n/maxN)*(H-PT-PB);
+      g+='<rect x="'+(cxx-bw-3)+'" y="'+(H-PB-h1)+'" width="'+bw+'" height="'+Math.max(h1,1)+'" fill="#333"/>'
+       + '<text x="'+(cxx-bw/2-3)+'" y="'+(H-PB-h1-4)+'" font-size="9.5" text-anchor="middle" fill="#000">'+s.h+'h</text>'
+       + '<rect x="'+(cxx+3)+'" y="'+(H-PB-h2)+'" width="'+bw+'" height="'+Math.max(h2,1)+'" fill="#aaa"/>'
+       + '<text x="'+(cxx+bw/2+3)+'" y="'+(H-PB-h2-4)+'" font-size="9.5" text-anchor="middle" fill="#000">'+s.n+'</text>'
+       + '<text x="'+cxx+'" y="'+(H-PB+14)+'" font-size="9.5" text-anchor="middle" fill="#333">'+esc(s.p.name.length>16?s.p.name.slice(0,15)+'…':s.p.name)+'</text>';
+    });
+    chP='<div class="chartblock"><h3>Task-uri și ore pe proiect</h3><svg viewBox="0 0 '+W+' '+H+'">'
+      +'<line x1="0" y1="'+(H-PB)+'" x2="'+W+'" y2="'+(H-PB)+'" stroke="#000"/>'+g+'</svg>'
+      +'<div class="prlegend">■ gri închis = ore lucrate · ■ gri deschis = număr task-uri</div></div>';
+  }
+
+  /* --- 4. Grafic rentabilitate: ore și task-uri pe fiecare zi --- */
+  let chD='';
+  if(done.length){
+    const nd=new Date(y,m,0).getDate();
+    const days=[];
+    for(let i=1;i<=nd;i++){
+      const k=ym+'-'+String(i).padStart(2,'0');
+      const g=done.filter(t=>t.doneAt===k);
+      let hh=0; for(const t of g) hh+=t.hrs||0;
+      days.push({d:i, h:Math.round(hh*10)/10, n:g.length});
+    }
+    const W=680, H=200, PB=26, PT=18, PL=6;
+    const maxH=Math.max(...days.map(x=>x.h),1), maxN=Math.max(...days.map(x=>x.n),1);
+    const slot=(W-PL*2)/nd, bw=Math.min(14, slot*0.6);
+    let g='', pts=[];
+    days.forEach((x,i)=>{
+      const cxx=PL+i*slot+slot/2;
+      const bh=(x.h/maxH)*(H-PT-PB);
+      if(x.h>0) g+='<rect x="'+(cxx-bw/2)+'" y="'+(H-PB-bh)+'" width="'+bw+'" height="'+Math.max(bh,1)+'" fill="#333"/>';
+      pts.push([cxx, H-PB-(x.n/maxN)*(H-PT-PB)]);
+      if(i%2===0) g+='<text x="'+cxx+'" y="'+(H-PB+13)+'" font-size="8" text-anchor="middle" fill="#666">'+x.d+'</text>';
+    });
+    const poly=pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+    const dots=pts.map((p,i)=>days[i].n>0?'<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="2.4" fill="#000"/>':'').join('');
+    chD='<div class="chartblock"><h3>Rentabilitate zilnică <span>max '+maxH+' h · max '+maxN+' task/zi</span></h3>'
+      +'<svg viewBox="0 0 '+W+' '+H+'"><line x1="0" y1="'+(H-PB)+'" x2="'+W+'" y2="'+(H-PB)+'" stroke="#000"/>'
+      +g+'<polyline points="'+poly+'" fill="none" stroke="#000" stroke-width="1.2" stroke-dasharray="4 3"/>'+dots+'</svg>'
+      +'<div class="prlegend">■ bare = ore lucrate pe zi · ⋯ linie = task-uri finalizate pe zi</div></div>';
+  }
+
+  /* --- Prezență: birou / acasă --- */
+  let loc='';
+  const lc=locCounts(ym);
+  if(lc.o+lc.h>0){
+    const nd2=new Date(y,m,0).getDate();
+    let cells='', zo=[], zh=[];
+    for(let i=1;i<=nd2;i++){
+      const k=ym+'-'+String(i).padStart(2,'0'), v=S.loc[k];
+      if(v==='office') zo.push(i); else if(v==='home') zh.push(i);
+      cells+='<span class="'+(v==='office'?'o':v==='home'?'h':'')+'">'+i+'<b>'+(v==='office'?'B':v==='home'?'A':'')+'</b></span>';
+    }
+    loc='<div class="chartblock"><h3>Prezență <span>Birou '+lc.o+' zile · Acasă '+lc.h+' zile</span></h3>'
+      +'<div class="prloc">'+cells+'</div>'
+      +'<div class="prlegend">B = birou (zilele '+(zo.join(', ')||'—')+') · A = acasă (zilele '+(zh.join(', ')||'—')+')</div></div>';
+  }
+
   $('printArea').innerHTML =
     '<h1>Raport activitate — '+MONTHS[m-1]+' '+y+'</h1>'
     +'<p class="prsub">PUPITRU · generat la '+fmtShort(todayKey())+' '+todayKey().slice(0,4)+'</p>'
+    +bars+loc
     +(rows||'<p>Niciun task finalizat în această lună pentru proiectele selectate.</p>')
+    +chP+chD
     +'<div class="prtotal"><b>Total: '+totalN+' task-uri finalizate'
     +(totalH?' · '+totalH+' ore lucrate':'')+'</b></div>';
 }
@@ -1265,7 +1426,7 @@ function makeDraggable(sheet){
 
 /* ---------- Delegare evenimente ---------- */
 document.addEventListener('click', async (ev)=>{
-  const el = ev.target.closest('button, .task, .hrow, .idea, .gdot');
+  const el = ev.target.closest('button, .task, .hrow, .idea, .gdot, .mcell');
   if(!el) return;
   const act = el.dataset ? el.dataset.act : null;
 
@@ -1289,6 +1450,18 @@ document.addEventListener('click', async (ev)=>{
     await saveState(); renderAll(); return;
   }
   if(act==='delhab'){ openHabitModal(el.closest('.hrow').dataset.id); return; }
+  if(el.dataset && el.dataset.v && el.parentElement && el.parentElement.id==='locBtns'){
+    const k=todayKey();
+    S.loc[k] = (S.loc[k]===el.dataset.v) ? undefined : el.dataset.v;
+    if(!S.loc[k]) delete S.loc[k];
+    await saveState(); renderLoc(); return;
+  }
+  if(el.dataset && el.dataset.loc){
+    const k=el.dataset.loc, v=S.loc[k];
+    S.loc[k] = v==='office' ? 'home' : v==='home' ? undefined : 'office';
+    if(!S.loc[k]) delete S.loc[k];
+    await saveState(); renderLoc(); return;
+  }
   if(el.classList.contains('gdot')){
     const k = el.dataset.day, hid = el.dataset.hid;
     S.hlog[k] ||= {};

@@ -231,12 +231,14 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .frun-time{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:42px;font-weight:700;color:var(--cyan)}
 .frun-state{font-size:13px;color:var(--amber);min-height:18px;font-family:var(--mono)}
 /* ---------- Asistent ---------- */
-.aifab{position:fixed;right:16px;bottom:calc(86px + var(--sab));width:54px;height:54px;border-radius:50%;
-  background:var(--panel);border:1.5px solid var(--cyan);color:var(--cyan);font-family:var(--cond);
-  font-size:17px;font-weight:700;letter-spacing:.06em;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 6px 18px rgba(0,0,0,.45);z-index:45}
-#shAI{display:flex;flex-direction:column;max-height:88vh}
-.aimsgs{overflow-y:auto;max-height:50vh;margin-bottom:12px;-webkit-overflow-scrolling:touch}
+.aifab{position:fixed;right:16px;bottom:calc(90px + var(--sab));width:56px;height:56px;border-radius:50%;
+  background:var(--cyan);border:none;color:#04222A;font-family:var(--cond);
+  font-size:18px;font-weight:700;letter-spacing:.08em;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 6px 20px rgba(56,211,232,.4);z-index:45}
+.aifab:active{transform:scale(.94)}
+#shAI.open{display:flex;flex-direction:column;height:92dvh;max-height:92dvh}
+#shAI .aimsgs{flex:1;min-height:0}
+.aimsgs{overflow-y:auto;margin-bottom:12px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
 .aim{margin-bottom:11px}
 .aim.u{text-align:right}
 .aim .b{display:inline-block;padding:9px 12px;border-radius:13px;max-width:88%;text-align:left;font-size:14px;line-height:1.45;white-space:pre-wrap}
@@ -640,10 +642,16 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
     <input id="aiInput" placeholder="Scrie ce lucrezi sau ce ai terminat…">
     <button class="btn pri" id="aiSend">Trimite</button>
   </div>
+  <button class="btn small" id="aiCog" style="margin-top:9px">Setări asistent</button>
   <div class="aikey" id="aiKeyWrap" style="display:none">
-    <div class="field" style="margin:10px 0 0"><label>Cheie API Anthropic (se salvează doar pe telefonul tău)</label>
-      <input id="aiKey" placeholder="sk-ant-..."></div>
-    <button class="btn small" id="aiKeySave" style="margin-top:8px">Salvează cheia</button>
+    <div class="field" style="margin:12px 0 0"><label>Model</label>
+      <div class="seg" id="aiProv">
+        <button data-v="gemini">Gemini · gratuit</button><button data-v="claude">Claude · plătit</button>
+      </div>
+    </div>
+    <div class="field"><label id="aiKeyLabel"></label><input id="aiKey" placeholder="lipește cheia aici"></div>
+    <div class="sub" id="aiKeyHint" style="margin:-6px 0 10px;font-size:11.5px"></div>
+    <button class="btn small pri" id="aiKeySave">Salvează</button>
   </div>
 </div>
 
@@ -766,6 +774,8 @@ function migrate(){
   S.focus ??= []; S.focusTarget ??= 3; S.lastBackup ??= null; S.loc ??= {}; S.nagUntil ??= null;
   for(const t of S.tasks){ t.nagAt ??= null; t.est ??= null; }
   S.aiKey ??= null;
+  S.aiProvider ??= 'gemini';
+  S.aiKeys ??= {claude:S.aiKey||null, gemini:null};
 }
 function seed(){
   const t = todayKey();
@@ -1236,22 +1246,49 @@ async function aiApply(actions){
   if(log.length){ await saveState(); renderAll(); }
   return log.join('<br>');
 }
+const GEM_MODELS=['gemini-2.5-flash','gemini-2.0-flash','gemini-flash-latest'];
+async function callGemini(sys, msgs){
+  const key=(S.aiKeys&&S.aiKeys.gemini)||'';
+  if(!key) throw new Error('lipsește cheia Gemini');
+  const body={ system_instruction:{parts:[{text:sys}]},
+    contents:msgs.map(m=>({role:m.role==='assistant'?'model':'user', parts:[{text:m.content}]})),
+    generationConfig:{temperature:0.3, maxOutputTokens:1000, responseMimeType:'application/json'} };
+  let lastErr=null;
+  for(const mdl of GEM_MODELS){
+    try{
+      const res=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+mdl+':generateContent?key='+encodeURIComponent(key),
+        {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+      if(!res.ok){ lastErr=new Error('HTTP '+res.status); continue; }
+      const data=await res.json();
+      const parts=((data.candidates||[])[0]||{}).content;
+      const txt=((parts&&parts.parts)||[]).map(p=>p.text||'').join('\n');
+      if(txt) return txt;
+      lastErr=new Error('răspuns gol');
+    }catch(e){ lastErr=e; }
+  }
+  throw lastErr||new Error('Gemini indisponibil');
+}
+async function callClaude(sys, msgs){
+  const headers={'Content-Type':'application/json'};
+  const key=(S.aiKeys&&S.aiKeys.claude)||null;
+  if(key){ headers['x-api-key']=key; headers['anthropic-version']='2023-06-01'; headers['anthropic-dangerous-direct-browser-access']='true'; }
+  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({
+    model:'claude-sonnet-4-6', max_tokens:1000, system:sys,
+    messages:msgs.map(m=>({role:m.role, content:m.content}))
+  })});
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  const data=await res.json();
+  return (data.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('\n');
+}
 async function aiSend(){
   const q=$('aiInput').value.trim(); if(!q) return;
   $('aiInput').value='';
   aiPush('user', q);
   aiStatus('…');
   try{
-    const headers={'Content-Type':'application/json'};
-    if(S.aiKey){ headers['x-api-key']=S.aiKey; headers['anthropic-version']='2023-06-01'; headers['anthropic-dangerous-direct-browser-access']='true'; }
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({
-      model:'claude-sonnet-4-6', max_tokens:1000,
-      system:AI_SYS+'\n\n'+aiContext(),
-      messages:aiHist.slice(-8).map(m=>({role:m.role, content:m.content}))
-    })});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const data=await res.json();
-    const raw=(data.content||[]).filter(c=>c.type==='text').map(c=>c.text).join('\n');
+    const sys=AI_SYS+'\n\n'+aiContext();
+    const msgs=aiHist.slice(-8);
+    const raw = S.aiProvider==='claude' ? await callClaude(sys, msgs) : await callGemini(sys, msgs);
     let parsed=null;
     try{ parsed=JSON.parse(raw.replace(/```json|```/g,'').trim()); }catch(e){}
     const pend=$('aiPending'); if(pend) pend.remove();
@@ -1263,9 +1300,25 @@ async function aiSend(){
     }
   }catch(err){
     const pend=$('aiPending'); if(pend) pend.remove();
-    aiStatus('Asistentul nu a putut răspunde ('+err.message+'). Dacă folosești aplicația instalată de pe GitHub, adaugă mai jos cheia ta API Anthropic.', true);
-    $('aiKeyWrap').style.display='block';
+    aiStatus('Asistentul nu a putut răspunde ('+err.message+'). Verifică setările de mai jos.', true);
+    openAISettings();
   }
+}
+function setAIProv(v){
+  S.aiProvider=v;
+  document.querySelectorAll('#aiProv button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
+  $('aiKey').value=(S.aiKeys&&S.aiKeys[v])||'';
+  if(v==='gemini'){
+    $('aiKeyLabel').textContent='Cheie Google AI Studio (gratuită)';
+    $('aiKeyHint').textContent='O obții gratuit de pe aistudio.google.com/apikey. Se salvează doar pe telefonul tău. Nivelul gratuit are limite de utilizare, iar Google poate folosi conversațiile pentru îmbunătățirea serviciului — nu trimite date confidențiale.';
+  } else {
+    $('aiKeyLabel').textContent='Cheie API Anthropic (plătită)';
+    $('aiKeyHint').textContent='De pe console.anthropic.com. Se salvează doar pe telefonul tău. Costul e de ordinul câtorva zeci de cenți pe lună la utilizarea ta.';
+  }
+}
+function openAISettings(){
+  $('aiKeyWrap').style.display='block';
+  setAIProv(S.aiProvider||'gemini');
 }
 function openAI(){
   if(!aiHist.length){
@@ -1273,7 +1326,8 @@ function openAI(){
     aiPush('assistant', 'Salut, Nedelcu. Spune-mi la ce lucrezi acum, ce ai terminat, sau cere-mi un plan de atac pentru task-urile deschise.');
     aiHist=[];
   }
-  $('aiKey').value=S.aiKey||'';
+  setAIProv(S.aiProvider||'gemini');
+  $('aiKeyWrap').style.display = ((S.aiKeys||{})[S.aiProvider||'gemini']) ? 'none' : 'block';
   openSheet('shAI');
 }
 
@@ -1866,10 +1920,18 @@ function bind(){
   $('aiFab').addEventListener('click', openAI);
   $('aiSend').addEventListener('click', aiSend);
   $('aiInput').addEventListener('keydown', e=>{ if(e.key==='Enter') aiSend(); });
+  $('aiCog').addEventListener('click', ()=>{
+    $('aiKeyWrap').style.display = $('aiKeyWrap').style.display==='block' ? 'none' : 'block';
+    if($('aiKeyWrap').style.display==='block') openAISettings();
+  });
+  document.querySelectorAll('#aiProv button').forEach(b=>b.addEventListener('click', async ()=>{
+    setAIProv(b.dataset.v); await saveState();
+  }));
   $('aiKeySave').addEventListener('click', async ()=>{
-    S.aiKey=$('aiKey').value.trim()||null; await saveState();
+    S.aiKeys=S.aiKeys||{}; S.aiKeys[S.aiProvider||'gemini']=$('aiKey').value.trim()||null;
+    await saveState();
     $('aiKeyWrap').style.display='none';
-    aiStatus('Cheie salvată. Încearcă din nou.');
+    aiStatus('Setare salvată. Scrie din nou mesajul.');
   });
 
   /* restanțe */

@@ -2038,9 +2038,14 @@ function bind(){
   /* raport lunar */
   $('btnReport').addEventListener('click', openReport);
   $('rpGen').addEventListener('click', ()=>{
-    buildReport($('rpMonth').value);
+    /* construim raportul și imprimăm în același gest al utilizatorului:
+       Safari blochează window.print() dacă apelul vine prea târziu după atingere */
+    try{ buildReport($('rpMonth').value); }
+    catch(e){ notStatus && null; alert('Raportul nu a putut fi construit: '+e.message); return; }
+    document.body.classList.remove('lock');
+    document.body.style.top='';
+    window.print();
     closeSheets();
-    setTimeout(()=>window.print(), 250);
   });
   /* glisare pentru închidere */
   document.querySelectorAll('.sheet').forEach(makeDraggable);

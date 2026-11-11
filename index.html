@@ -4,7 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <title>PUPITRU — Nedelcu</title>
-<meta name="theme-color" content="#0A0F16">
+<meta name="theme-color" content="#F4F6F9">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -12,24 +15,22 @@
 <meta name="apple-mobile-web-app-title" content="PUPITRU">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600;700&family=Saira+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0A0F16; --panel:#101823; --panel2:#0C121B; --line:#1C2736; --line2:#243248;
-  --text:#DCE4EE; --muted:#7C8899; --dim:#55606F;
-  --cyan:#38D3E8; --cyan-dk:#0F4E5E; --amber:#F0A93B; --green:#4ADE80; --red:#F47174;
-  --font:"Saira","Segoe UI",system-ui,sans-serif;
-  --cond:"Saira Condensed","Saira",sans-serif;
-  --mono:"JetBrains Mono","SF Mono",monospace;
+  --bg:#F4F6F9; --panel:#FFFFFF; --panel2:#FAFBFD; --line:#E9EEF4; --line2:#CFD9E4;
+  --text:#0A1622; --muted:#5D6B7A; --dim:#9FB0C2;
+  --navy:#17324D; --navy-dk:#0A1622;
+  --cyan:#E2461F; --cyan-dk:#FDECE6; --amber:#B8740F; --green:#1F7A52; --red:#A51C14;
+  --amber-bg:#FBF2E2; --green-bg:#E6F3EC; --red-bg:#FBEAE8;
+  --font:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --cond:Manrope,Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,"Roboto Mono",monospace;
   --sab:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.45;overflow-x:clip;touch-action:manipulation}
 body{padding-bottom:calc(78px + var(--sab));
-  background-image:radial-gradient(700px 380px at 80% -6%,rgba(56,211,232,.09),transparent 60%),
-                   radial-gradient(500px 400px at -10% 108%,rgba(240,169,59,.05),transparent 55%);}
+  -webkit-font-smoothing:antialiased;}
 button{font-family:inherit;color:inherit;background:none;border:none;padding:0;cursor:pointer}
 input,select,textarea{font-family:inherit;font-size:16px;color:var(--text);background:var(--panel2);
   border:1px solid var(--line2);border-radius:10px;padding:10px 12px;width:100%;outline:none}
@@ -39,8 +40,8 @@ h1,h2,h3{margin:0;font-family:var(--cond);letter-spacing:.02em}
 
 /* ---------- Header ---------- */
 header{display:flex;align-items:center;justify-content:space-between;padding:max(48px, calc(14px + env(safe-area-inset-top,0px))) 16px 8px}
-.brand .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.28em;color:var(--cyan);text-transform:uppercase}
-.brand h1{font-size:24px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.brand .eyebrow{font-size:10px;letter-spacing:.2em;color:var(--cyan);text-transform:uppercase;font-weight:700}
+.brand h1{font-family:var(--cond);font-size:23px;font-weight:800;letter-spacing:-.02em;color:var(--navy)}
 .brand .date{font-size:12.5px;color:var(--muted);margin-top:2px}
 .scorepill{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--amber);
   border:1px solid var(--line2);background:var(--panel);border-radius:999px;padding:7px 12px;white-space:nowrap}
@@ -53,9 +54,9 @@ section.tab.on{display:block;animation:fadein .18s ease}
 #tab-idei.on{display:flex;flex-direction:column;min-height:calc(100dvh - 250px)}
 #tab-idei .card{flex:1}
 @keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;position:relative}
-.card .accent{position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:var(--cyan)}
-.card h2{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;position:relative;box-shadow:0 1px 2px rgba(20,24,27,.04)}
+.card .accent{position:absolute;left:0;top:14px;bottom:14px;width:3px;border-radius:0 3px 3px 0;background:var(--cyan)}
+.card h2{font-family:var(--cond);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--navy);margin-bottom:10px}
 .card h2 b{color:var(--text)}
 .sub{font-size:12.5px;color:var(--muted)}
 .empty{color:var(--dim);font-size:13.5px;padding:8px 2px;font-style:italic}
@@ -64,7 +65,7 @@ section.tab.on{display:block;animation:fadein .18s ease}
 .kpi4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
 .kpi4 b{display:block;font-family:var(--mono);font-size:21px;color:var(--text);line-height:1.1}
 .kpi4 span{font-size:9.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.kpi4 div:nth-child(1) b{color:var(--cyan)}
+.kpi4 div:nth-child(1) b{color:var(--navy)}
 .kpi4 div:nth-child(3) b{color:var(--green)}
 .kpi4 div:nth-child(4) b{color:var(--red)}
 .ringwrap{display:flex;align-items:center;gap:16px}
@@ -97,16 +98,16 @@ section.tab.on{display:block;animation:fadein .18s ease}
 .task:last-child{border-bottom:none}
 .chk{width:24px;height:24px;flex:none;margin-top:1px;border:2px solid var(--line2);border-radius:8px;
   display:flex;align-items:center;justify-content:center;font-size:14px;color:transparent;transition:.15s}
-.task.done .chk{background:var(--green);border-color:var(--green);color:#06240F}
+.task.done .chk{background:var(--green);border-color:var(--green);color:#FFFFFF}
 .tbody{flex:1;min-width:0}
 .ttitle{font-size:14.5px;font-weight:500;word-break:break-word}
 .task.done .ttitle{color:var(--dim);text-decoration:line-through}
 .tmeta{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;align-items:center}
 .chip{font-size:10.5px;font-family:var(--mono);border-radius:6px;padding:2px 7px;border:1px solid var(--line2);color:var(--muted)}
 .chip.proj{border-color:transparent;font-weight:500}
-.chip.due{color:var(--muted)} .chip.due.today{color:var(--amber);border-color:rgba(240,169,59,.4)}
-.chip.due.late{color:var(--red);border-color:rgba(244,113,116,.45)}
-.chip.pts{color:var(--cyan);border-color:rgba(56,211,232,.3)}
+.chip.due{color:var(--muted)} .chip.due.today{color:var(--amber);border-color:rgba(169,106,0,.35)}
+.chip.due.late{color:var(--red);border-color:rgba(179,38,30,.35)}
+.chip.pts{color:var(--cyan);border-color:rgba(14,122,140,.28)}
 .imp{letter-spacing:1px;font-size:10px;color:var(--amber)}
 .imp .off{color:var(--line2)}
 .tmore{flex:none;color:var(--dim);font-size:18px;padding:2px 6px;margin-top:-2px}
@@ -127,19 +128,19 @@ section.tab.on{display:block;animation:fadein .18s ease}
 .hstreak{font-family:var(--mono);font-size:11.5px;color:var(--muted);flex:none}
 .htoggle{width:30px;height:30px;flex:none;border:2px solid var(--line2);border-radius:50%;
   display:flex;align-items:center;justify-content:center;color:transparent;font-size:15px;transition:.15s}
-.hrow.on .htoggle{background:var(--green);border-color:var(--green);color:#06240F}
+.hrow.on .htoggle{background:var(--green);border-color:var(--green);color:#FFFFFF}
 .hgrid{display:grid;grid-template-columns:auto repeat(7,1fr);gap:6px 4px;align-items:center;font-size:11px}
 .locrow{display:flex;gap:9px;margin-top:2px}
 .locrow button{flex:1;padding:13px 6px;border:1px solid var(--line2);border-radius:11px;background:var(--panel2);
   color:var(--muted);font-size:14.5px;font-weight:600}
 .locrow button.on[data-v="office"]{border-color:var(--cyan);background:var(--cyan-dk);color:var(--cyan)}
-.locrow button.on[data-v="home"]{border-color:var(--amber);background:rgba(240,169,59,.15);color:var(--amber)}
+.locrow button.on[data-v="home"]{border-color:var(--amber);background:rgba(169,106,0,.10);color:var(--amber)}
 .mgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:4px}
 .mgrid .mh{font-family:var(--mono);font-size:9px;color:var(--dim);text-align:center;text-transform:uppercase}
 .mcell{aspect-ratio:1;border:1px solid var(--line);border-radius:8px;background:var(--panel2);color:var(--dim);
   font-family:var(--mono);font-size:11px;display:flex;align-items:center;justify-content:center;padding:0}
 .mcell.office{background:var(--cyan-dk);border-color:var(--cyan);color:var(--cyan);font-weight:700}
-.mcell.home{background:rgba(240,169,59,.15);border-color:var(--amber);color:var(--amber);font-weight:700}
+.mcell.home{background:rgba(169,106,0,.10);border-color:var(--amber);color:var(--amber);font-weight:700}
 .mcell.void{border:none;background:none}
 .mlegend{display:flex;gap:14px;margin-top:10px;font-size:12px;color:var(--muted)}
 .mlegend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
@@ -157,8 +158,8 @@ section.tab.on{display:block;animation:fadein .18s ease}
 .idea.closed{border-left:3px solid var(--green);padding-left:10px}
 .idea.closed .it{color:var(--green)}
 .ibadge{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--green);
-  border:1px solid rgba(74,222,128,.4);border-radius:5px;padding:1px 6px;margin-left:8px;vertical-align:2px}
-.promptcard{border-color:rgba(240,169,59,.45)}
+  border:1px solid rgba(28,122,78,.35);border-radius:5px;padding:1px 6px;margin-left:8px;vertical-align:2px}
+.promptcard{border-color:rgba(169,106,0,.38)}
 .promptcard .accent{background:var(--amber)}
 
 /* ---------- Charts ---------- */
@@ -173,8 +174,8 @@ section.tab.on{display:block;animation:fadein .18s ease}
 /* ---------- Controls ---------- */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:600;
   border-radius:10px;padding:11px 16px;border:1px solid var(--line2);background:var(--panel2);color:var(--text)}
-.btn.pri{background:var(--cyan);border-color:var(--cyan);color:#04222A}
-.btn.danger{color:var(--red);border-color:rgba(244,113,116,.4)}
+.btn.pri{background:var(--cyan);border-color:var(--cyan);color:#FFFFFF}
+.btn.danger{color:var(--red);border-color:rgba(179,38,30,.32)}
 .btn.small{padding:7px 12px;font-size:12.5px;font-weight:500}
 .btn.wide{width:100%}
 .seg{display:flex;background:var(--panel2);border:1px solid var(--line2);border-radius:10px;padding:3px;gap:3px}
@@ -195,26 +196,26 @@ section.tab.on{display:block;animation:fadein .18s ease}
 
 /* ---------- FAB / Tabbar ---------- */
 .fab{position:fixed;right:16px;bottom:calc(88px + var(--sab));width:54px;height:54px;border-radius:16px;
-  background:var(--cyan);color:#04222A;font-size:28px;font-weight:600;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 6px 20px rgba(56,211,232,.35);z-index:40}
+  background:var(--cyan);color:#FFFFFF;font-size:28px;font-weight:600;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 5px 14px rgba(14,122,140,.26);z-index:40}
 nav.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;
-  background:rgba(12,17,26,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  background:rgba(255,255,255,.93);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   border-top:1px solid var(--line);padding:8px 8px max(10px, var(--sab));gap:6px}
 .tabbar button[data-tab]{flex:1;display:flex;align-items:center;justify-content:center;color:var(--muted);
   font-size:11px;letter-spacing:.02em;font-weight:600;padding:11px 2px;
-  border:1px solid rgba(56,211,232,.35);border-radius:11px;background:var(--panel2)}
+  border:1px solid rgba(14,122,140,.30);border-radius:11px;background:var(--panel2)}
 .tabbar button.on{color:var(--cyan);border-color:var(--cyan);background:var(--cyan-dk);font-weight:700}
-.tabbar .tabadd{flex:none;width:44px;height:44px;border-radius:11px;background:var(--cyan);color:#04222A;
+.tabbar .tabadd{flex:none;width:44px;height:44px;border-radius:11px;background:var(--cyan);color:#FFFFFF;
   font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;align-self:center}
 
 /* ---------- Modals ---------- */
-.ovl{position:fixed;inset:0;background:rgba(4,7,12,.66);backdrop-filter:blur(3px);z-index:90;display:none}
+.ovl{position:fixed;inset:0;background:rgba(20,24,27,.38);backdrop-filter:blur(3px);z-index:90;display:none}
 .ovl.open{display:block;animation:fadein .15s}
 .sheet{position:fixed;left:0;right:0;bottom:0;z-index:100;background:var(--panel);border:1px solid var(--line2);border-bottom:none;
   border-radius:18px 18px 0 0;padding:18px 16px calc(20px + var(--sab));max-height:86vh;overflow-y:auto;display:none}
 .sheet.open{display:block;animation:slideup .22s ease}
 @keyframes slideup{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
-.sheet h3{font-size:17px;margin-bottom:16px}
+.sheet h3{font-family:var(--cond);font-size:17px;font-weight:700;color:var(--navy);margin-bottom:16px}
 .sheet .grab{width:100%;height:26px;margin:-6px 0 8px;display:flex;align-items:center;justify-content:center;touch-action:none}
 .sheet .grab::after{content:'';width:44px;height:4.5px;border-radius:2.5px;background:var(--line2)}
 .sheet{transition:transform .18s ease;overscroll-behavior:contain;max-width:100vw;overflow-x:hidden}
@@ -223,22 +224,22 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .entry:last-child{border-bottom:none}
 .entry .ed{font-family:var(--mono);font-size:10.5px;color:var(--cyan);margin-bottom:2px}
 /* ---------- FOCUS ---------- */
-#btnFocus,#taskFilter{position:-webkit-sticky;position:sticky;
+#btnFocus,#projTools{position:-webkit-sticky;position:sticky;
   top:calc(max(4px, env(safe-area-inset-top,0px)) + 10px);z-index:35;isolation:isolate}
-#btnFocus{background:var(--panel)}
-#taskFilter{background:var(--panel2)}
-#btnFocus::before,#taskFilter::before{content:'';position:absolute;z-index:-1;
+#btnFocus{background:var(--cyan);color:#fff}
+#projTools{background:var(--bg);padding-bottom:4px}
+#btnFocus::before,#projTools::before{content:'';position:absolute;z-index:-1;
   left:-16px;right:-16px;bottom:-11px;
   top:calc(-1 * (max(4px, env(safe-area-inset-top,0px)) + 12px));
   background:var(--bg);
-  box-shadow:0 10px 12px -6px rgba(4,7,12,.9);
+  box-shadow:0 10px 12px -6px rgba(20,24,27,.16);
   opacity:0;transition:opacity .14s ease;pointer-events:none}
-#btnFocus.stuck::before,#taskFilter.stuck::before{opacity:1}
+#btnFocus.stuck::before,#projTools.stuck::before{opacity:1}
 #tab-azi.on,#tab-proiecte.on{overflow:visible}
 .focusbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;margin-bottom:12px;
-  padding:14px;border:1px solid rgba(56,211,232,.5);border-radius:14px;background:var(--panel);
-  font-family:var(--cond);font-size:17px;font-weight:700;letter-spacing:.32em;color:var(--cyan);text-transform:uppercase}
-.fcount{font-family:var(--mono);font-size:11px;letter-spacing:0;color:var(--muted);font-weight:500}
+  padding:14px;border:1px solid var(--cyan);border-radius:12px;background:var(--cyan);
+  font-size:15px;font-weight:700;letter-spacing:.18em;color:#fff;text-transform:uppercase}
+.fcount{font-family:var(--mono);font-size:11px;letter-spacing:0;color:rgba(255,255,255,.85);font-weight:500}
 .fopt{display:flex;gap:9px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;margin-bottom:7px;font-size:14px}
 .fopt.sel{border-color:var(--cyan);background:var(--cyan-dk)}
 .frun{position:fixed;inset:0;background:var(--bg);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:24px}
@@ -250,14 +251,14 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .frun-state{font-size:13px;color:var(--amber);min-height:18px;font-family:var(--mono)}
 /* ---------- Notificări ---------- */
 .notstat{font-family:var(--mono);font-size:12px;padding:9px 11px;border-radius:9px;margin-bottom:11px;line-height:1.4}
-.notstat.on{color:var(--green);background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.35)}
+.notstat.on{color:var(--green);background:rgba(28,122,78,.08);border:1px solid rgba(28,122,78,.30)}
 .notstat.off{color:var(--muted);background:var(--panel2);border:1px solid var(--line2)}
-.notstat.warn{color:var(--amber);background:rgba(240,169,59,.1);border:1px solid rgba(240,169,59,.35)}
+.notstat.warn{color:var(--amber);background:rgba(169,106,0,.08);border:1px solid rgba(169,106,0,.30)}
 /* ---------- Asistent ---------- */
 .aifab{position:fixed;right:16px;bottom:calc(90px + var(--sab));width:56px;height:56px;border-radius:50%;
-  background:var(--cyan);border:none;color:#04222A;font-family:var(--cond);
+  background:var(--cyan);border:none;color:#FFFFFF;font-family:var(--cond);
   font-size:18px;font-weight:700;letter-spacing:.08em;display:flex;align-items:center;justify-content:center;
-  box-shadow:0 6px 20px rgba(56,211,232,.4);z-index:45}
+  box-shadow:0 5px 14px rgba(14,122,140,.28);z-index:45}
 .aifab:active{transform:scale(.94)}
 #shAI.open{display:flex;flex-direction:column;height:92dvh;max-height:92dvh}
 #shAI .aimsgs{flex:1;min-height:0}
@@ -295,8 +296,8 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 .pdot{width:6px;height:6px;border-radius:2px;flex:none}
 .ptitle{flex:1;min-width:0}
 /* ---------- Triaj ---------- */
-.btn.go{background:var(--green);border-color:var(--green);color:#062912}
-.btn.stop{background:var(--red);border-color:var(--red);color:#2A0A0B}
+.btn.go{background:var(--green);border-color:var(--green);color:#FFFFFF}
+.btn.stop{background:var(--red);border-color:var(--red);color:#FFFFFF}
 #shTriage .rowflex .btn{padding:15px 10px;font-size:15px}
 @media (min-width:415px){
   html,body{font-size:16px}
@@ -316,20 +317,20 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   body{background:#fff !important;padding:0 !important}
   body>*{display:none !important}
   #printArea{display:block !important;color:#111;font-family:"Arial Nova","Arial Nova Light",Arial,Helvetica,sans-serif;padding:12px}
-  #printArea h1{font-size:20px;margin:0 0 2px;font-family:inherit;color:#0E7A8C}
-  #printArea .prsub{color:#666;font-size:11px;margin:0 0 14px;border-bottom:2px solid #0E7A8C;padding-bottom:8px}
+  #printArea h1{font-size:20px;margin:0 0 2px;font-family:inherit;color:#0A1622}
+  #printArea .prsub{color:#666;font-size:11px;margin:0 0 14px;border-bottom:2px solid #17324D;padding-bottom:8px}
   #printArea h3{font-size:13px;margin:16px 0 5px;padding:4px 8px;font-family:inherit;color:#111;
-    background:#F1F5F7;border-left:5px solid #0E7A8C;border-radius:3px}
+    background:#F4F6F9;border-left:5px solid #E2461F;border-radius:3px}
   #printArea h3 span{float:right;font-weight:400;font-size:11px;color:#444}
   #printArea table{width:100%;border-collapse:collapse;font-size:11px}
-  #printArea th{text-align:left;color:#0E7A8C;font-weight:700;padding:4px;border-bottom:1.2px solid #0E7A8C}
+  #printArea th{text-align:left;color:#17324D;font-weight:700;padding:4px;border-bottom:1.2px solid #17324D}
   #printArea td{padding:4px;border-bottom:0.5px solid #ccc;vertical-align:top}
   #printArea tbody tr:nth-child(even) td{background:#FAFBFC}
   #printArea td.hh,#printArea th.hh{white-space:nowrap;text-align:right;min-width:52px}
-  #printArea .prfoot{margin-top:26px;padding-top:10px;border-top:1.5px solid #0E7A8C;font-size:11.5px;
+  #printArea .prfoot{margin-top:26px;padding-top:10px;border-top:1.5px solid #17324D;font-size:11.5px;
     display:flex;justify-content:space-between;page-break-inside:avoid}
   #printArea .prfoot b{font-size:12.5px;letter-spacing:.02em}
-  #printArea .prbadge{display:inline-block;background:#0E7A8C;color:#fff;font-size:11px;font-weight:700;
+  #printArea .prbadge{display:inline-block;background:#E2461F;color:#fff;font-size:11px;font-weight:700;
     padding:3px 9px;border-radius:11px;margin-left:6px}
   #printArea .prtotal{margin-top:16px;font-size:13px;border-top:2px solid #000;padding-top:8px}
   #printArea .chartblock{margin:10px 0 18px;page-break-inside:avoid}
@@ -411,9 +412,14 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 
   <!-- ================= PROIECTE ================= -->
   <section class="tab" id="tab-proiecte">
-    <div class="seg" id="taskFilter" style="margin-bottom:12px">
-      <button data-f="active" class="on">Active</button>
-      <button data-f="done">Finalizate</button>
+    <div id="projTools">
+      <input id="taskSearch" placeholder="Caută task sau proiect…" style="margin-bottom:8px">
+      <div class="seg" id="taskFilter">
+        <button data-f="active" class="on">Active</button>
+        <button data-f="doing">În lucru</button>
+        <button data-f="blocked">Blocate</button>
+        <button data-f="done">Livrate</button>
+      </div>
     </div>
     <div id="projList"></div>
     <button class="btn wide" id="btnAddProj">＋ Proiect nou</button>
@@ -473,6 +479,16 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       <div id="chOnTime"></div>
     </div>
     <div class="card">
+      <span class="accent" style="background:var(--amber)"></span>
+      <h2>Venit lunar de repartizat</h2>
+      <div class="sub" style="margin:-2px 0 10px">Suma lunară primită de la beneficiar. Se împarte pe proiecte după ponderea orelor, iar din ea rezultă costul pe task.</div>
+      <div class="rowflex">
+        <input type="number" id="incVal" min="0" step="100" placeholder="ex: 12000">
+        <button class="btn" id="incSave" style="flex:0 0 110px">Salvează</button>
+      </div>
+      <div id="incSummary" style="margin-top:12px"></div>
+    </div>
+    <div class="card">
       <span class="accent" style="background:var(--green)"></span>
       <h2>Notificări</h2>
       <div class="notstat off" id="notStatus">Neconfigurate</div>
@@ -521,6 +537,13 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   <h3 id="shTaskTitle">Task nou</h3>
   <div class="field"><label>Denumire</label><input id="tfTitle" placeholder="Ce ai de făcut?"></div>
   <div class="field"><label>Proiect</label><select id="tfProj"></select></div>
+  <div class="field"><label>Stare</label>
+    <div class="seg" id="tfState">
+      <button data-v="todo" class="on">De făcut</button><button data-v="doing">În lucru</button><button data-v="blocked">Blocat</button>
+    </div>
+  </div>
+  <div class="field" id="tfBlockWrap" style="display:none"><label>Motivul blocajului</label>
+    <input id="tfBlock" placeholder="ex: aștept oferta Hoval"></div>
   <div class="field"><label>Prioritate (urgență)</label>
     <div class="seg" id="tfPrio">
       <button data-v="1">Scăzută</button><button data-v="2" class="on">Medie</button><button data-v="3">Ridicată</button>
@@ -594,14 +617,20 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   <div class="grab"></div>
   <h3>Proiect</h3>
   <div class="field"><label>Denumire</label><input id="peName"></div>
+  <div class="field"><label>Beneficiar</label><input id="peClient" placeholder="ex: ICCO FM / Aveuro"></div>
+  <div class="rowflex">
+    <div class="field" style="flex:1"><label>Termen de predare</label><input type="date" id="peDeadline"></div>
+    <div class="field" style="flex:1"><label>Buget ore</label><input type="number" id="peBudget" min="0" step="1" placeholder="ex: 120"></div>
+  </div>
   <div class="field"><label>Culoare</label><div class="swatches" id="peColors"></div></div>
   <div class="field"><label>Poziție în listă</label>
     <div class="rowflex"><button class="btn" id="peUp">↑ Mai sus</button><button class="btn" id="peDown">↓ Mai jos</button></div>
   </div>
-  <div class="rowflex">
-    <button class="btn danger" id="peDelete">Șterge</button>
+  <div class="rowflex" style="margin-bottom:9px">
+    <button class="btn" id="peArchive">Arhivează</button>
     <button class="btn pri" id="peSave">Salvează</button>
   </div>
+  <button class="btn danger wide" id="peDelete">Șterge proiectul</button>
 </div>
 
 <!-- ============ MODAL: TASK RESTANT ============ -->
@@ -689,7 +718,9 @@ let memFallback = null;  // dacă storage nu e disponibil
 
 const PRIO = {1:{l:'Scăzută',m:1}, 2:{l:'Medie',m:1.5}, 3:{l:'Ridicată',m:2}};
 const RECL = {d:'zilnic', w:'săpt.', m:'lunar'};
-const PROJ_COLORS = ['#38D3E8','#F0A93B','#4ADE80','#60A5FA','#A78BFA','#F472B6','#FB7185','#2DD4BF','#FACC15','#C084FC','#9BA7B4'];
+const STATES = {todo:{l:'De făcut', c:'var(--muted)'}, doing:{l:'În lucru', c:'var(--cyan)'},
+                blocked:{l:'Blocat', c:'var(--red)'}, done:{l:'Livrat', c:'var(--green)'}};
+const PROJ_COLORS = ['#17324D','#E2461F','#1F7A52','#3E6E9E','#6A4C93','#A33E73','#B8330F','#2B8C8C','#8A6D1F','#4F5D75','#7A5C3E'];
 const MONTHS = ['ian','feb','mar','apr','mai','iun','iul','aug','sep','oct','nov','dec'];
 const WDAYS  = ['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'];
 const WDAYS2 = ['Du','Lu','Ma','Mi','Jo','Vi','Sâ'];
@@ -759,7 +790,10 @@ function migrate(){
   for(const t of S.tasks){ t.rec ??= null; t.planned ??= null; t.triagedOn ??= null; t.timeS ??= null; t.timeE ??= null; t.hrs ??= null; }
   S.created ??= todayKey();
   S.focus ??= []; S.focusTarget ??= 3; S.lastBackup ??= null; S.loc ??= {}; S.nagUntil ??= null;
-  for(const t of S.tasks){ t.nagAt ??= null; t.est ??= null; }
+  for(const t of S.tasks){ t.nagAt ??= null; t.est ??= null;
+    t.state ??= (t.done ? 'done' : 'todo'); t.blockReason ??= null; }
+  for(const p of S.projects){ p.client ??= null; p.deadline ??= null; p.budget ??= null; p.archived ??= false; }
+  S.income ??= {monthly:null, currency:'lei'};
   for(const i of S.ideas){ i.closed ??= (i.entries && i.entries.length>0); }
   S.aiKey ??= null;
   S.aiProvider ??= 'gemini';
@@ -819,11 +853,35 @@ function pickPromptIdea(){
    PUPITRU — randare, grafice, interacțiuni
    ========================================================= */
 let filterMode = 'active';
-let editTaskId = null, tfState = {prio:2, rec:''};
+let searchQuery = '';
+let editTaskId = null, tfState = {prio:2, rec:'', state:'todo'};
 let projColorPick = PROJ_COLORS[0];
 let currentPrompt = null, currentIdeaId = null;
 
 function projById(id){ return S.projects.find(p=>p.id===id); }
+function liveProjects(){ return S.projects.filter(p=>!p.archived); }
+function projHours(pid, ym){
+  let s=0;
+  for(const t of S.tasks) if(t.pid===pid && t.done && t.hrs && (!ym || (t.doneAt||'').slice(0,7)===ym)) s+=t.hrs;
+  return Math.round(s*10)/10;
+}
+/* repartizarea venitului lunar pe proiecte, după ponderea orelor */
+function monthEconomics(ym){
+  const total=monthHours(ym);
+  const inc=(S.income&&+S.income.monthly)||0;
+  const rows=S.projects.map(p=>{
+    const done=S.tasks.filter(t=>t.done && (t.doneAt||'').slice(0,7)===ym && t.pid===p.id);
+    const hrs=done.reduce((a,t)=>a+(t.hrs||0),0);
+    const share= total>0 ? hrs/total : 0;
+    const value= inc*share;
+    return {p, tasks:done.length, hours:Math.round(hrs*10)/10,
+            share:Math.round(share*1000)/10, value:Math.round(value),
+            perTask: done.length ? Math.round(value/done.length) : null};
+  }).filter(r=>r.tasks>0 || r.hours>0);
+  return {rows, income:inc, totalHours:total,
+          totalTasks:S.tasks.filter(t=>t.done && (t.doneAt||'').slice(0,7)===ym).length,
+          currency:(S.income&&S.income.currency)||'lei'};
+}
 
 /* ---------- Header ---------- */
 function renderHeader(){
@@ -849,7 +907,8 @@ function taskRowHTML(t){
     + '<button class="chk" data-act="toggle">✓</button>'
     + '<div class="tbody"><div class="ttitle">'+esc(t.title)+'</div>'
     + '<div class="tmeta">'+projChip+due+(t.timeS?'<span class="chip">'+t.timeS+(t.timeE?'–'+t.timeE:'')+'</span>':'')
-    + (t.prio===3?'<span class="chip" style="color:var(--red);border-color:rgba(244,113,116,.4)">Ridicată</span>':t.prio===1?'':'<span class="chip">Medie</span>')
+    + (!t.done && t.state && t.state!=='todo' ? '<span class="chip" style="color:'+STATES[t.state].c+';border-color:currentColor">'+STATES[t.state].l+(t.state==='blocked'&&t.blockReason?': '+esc(t.blockReason):'')+'</span>' : '')
+    + (t.prio===3?'<span class="chip" style="color:var(--red);border-color:rgba(179,38,30,.32)">Ridicată</span>':t.prio===1?'':'<span class="chip">Medie</span>')
     + (t.rec?'<span class="chip">↻ '+RECL[t.rec]+'</span>':'')
     + (t.est&&!t.hrs?'<span class="chip">~'+t.est+'h</span>':'')+(t.hrs?'<span class="chip pts">'+t.hrs+'h</span>':'')+'</div></div>'
     + '<button class="tmore" data-act="edit">⋯</button></div>';
@@ -927,25 +986,54 @@ function renderLoc(){
 
 /* ---------- Proiecte ---------- */
 function renderProiecte(){
-  const list = $('projList');
-  if(!S.projects.length){ list.innerHTML='<div class="empty" style="padding:20px 4px">Niciun proiect încă.</div>'; return; }
-  list.innerHTML = S.projects.map(p=>{
-    const all  = S.tasks.filter(t=>t.pid===p.id);
-    const done = all.filter(t=>t.done);
-    const show = (filterMode==='active' ? all.filter(t=>!t.done).sort(sortForToday)
-                                        : done.sort((a,b)=> (b.doneAt||'') < (a.doneAt||'') ? -1:1));
-    const pct = all.length ? Math.round(done.length/all.length*100) : 0;
+  const list=$('projList');
+  const q=(searchQuery||'').trim().toLowerCase();
+  const today=todayKey();
+  const projects=S.projects.filter(p=>!p.archived || filterMode==='done');
+  if(!projects.length){ list.innerHTML='<div class="empty" style="padding:20px 4px">Niciun proiect activ.</div>'; return; }
+
+  let html=projects.map(p=>{
+    const all=S.tasks.filter(t=>t.pid===p.id);
+    const done=all.filter(t=>t.done);
+    let show;
+    if(filterMode==='done')         show=done.sort((a,b)=>(b.doneAt||'')<(a.doneAt||'')?-1:1);
+    else if(filterMode==='doing')   show=all.filter(t=>!t.done && t.state==='doing').sort(sortForToday);
+    else if(filterMode==='blocked') show=all.filter(t=>!t.done && t.state==='blocked').sort(sortForToday);
+    else                            show=all.filter(t=>!t.done).sort(sortForToday);
+    if(q) show=show.filter(t=>t.title.toLowerCase().includes(q) || p.name.toLowerCase().includes(q));
+    if(q && !show.length) return '';
+
+    const spent=projHours(p.id, null);
+    const pct = p.budget ? Math.min(100, Math.round(spent/p.budget*100))
+                         : (all.length ? Math.round(done.length/all.length*100) : 0);
+    const over = p.budget && spent>p.budget;
+    const late = p.deadline && p.deadline<today && all.some(t=>!t.done);
+    const blocked=all.filter(t=>!t.done && t.state==='blocked').length;
+
+    let meta='';
+    if(p.client)   meta+='<span class="chip">'+esc(p.client)+'</span>';
+    if(p.deadline) meta+='<span class="chip due'+(late?' late':'')+'">predare '+fmtShort(p.deadline)+'</span>';
+    meta+='<span class="chip'+(over?' late':'')+'" style="'+(over?'color:var(--red);border-color:rgba(179,38,30,.32)':'')+'">'
+         + spent+(p.budget?' / '+p.budget:'')+' h</span>';
+    if(blocked) meta+='<span class="chip" style="color:var(--red);border-color:rgba(179,38,30,.32)">'+blocked+' blocate</span>';
+    if(p.archived) meta+='<span class="chip">arhivat</span>';
+
     return '<div class="card" data-pid="'+p.id+'">'
       + '<div class="proj-head"><span class="proj-dot" style="background:'+p.color+'"></span>'
       + '<span class="proj-name">'+esc(p.name)+'</span>'
       + '<span class="proj-count">'+done.length+'/'+all.length+'</span>'
       + '<button class="tmore" data-act="delproj">⋯</button></div>'
-      + '<div class="pbar"><i style="width:'+pct+'%;background:'+p.color+'"></i></div>'
+      + '<div class="tmeta" style="margin:6px 0 2px">'+meta+'</div>'
+      + '<div class="pbar"><i style="width:'+pct+'%;background:'+(over?'var(--red)':p.color)+'"></i></div>'
       + (show.length ? show.map(taskRowHTML).join('')
-                     : '<div class="empty">'+(filterMode==='active'?'Niciun task activ.':'Nimic finalizat încă.')+'</div>')
+                     : '<div class="empty">'+(filterMode==='done'?'Nimic livrat încă.':filterMode==='blocked'?'Niciun task blocat.':filterMode==='doing'?'Nimic în lucru.':'Niciun task activ.')+'</div>')
       + '<button class="btn small" data-act="addtask" style="margin-top:10px">＋ Task în '+esc(p.name)+'</button>'
       + '</div>';
   }).join('');
+
+  const archived=S.projects.filter(p=>p.archived).length;
+  if(archived && filterMode!=='done') html+='<div class="sub" style="text-align:center;padding:6px 0 2px">'+archived+' proiect'+(archived===1?' arhivat':'e arhivate')+' — vizibile la filtrul „Livrate"</div>';
+  list.innerHTML = html || '<div class="empty" style="padding:20px 4px">Nimic găsit pentru „'+esc(searchQuery)+'".</div>';
 }
 
 /* ---------- Idei ---------- */
@@ -971,11 +1059,11 @@ function areaChart(container, series, color){
     line += (i?'L':'M')+x+' '+y+' '; area += 'L'+x+' '+y+' '; });
   area += 'L'+X(n-1).toFixed(1)+' '+(PT+ih)+' Z';
   const last = series[n-1];
-  const lab = (i,anchor)=>'<text x="'+X(i)+'" y="'+(H-5)+'" fill="#55606F" font-size="9" font-family="JetBrains Mono,monospace" text-anchor="'+anchor+'">'+fmtShort(series[i].k)+'</text>';
+  const lab = (i,anchor)=>'<text x="'+X(i)+'" y="'+(H-5)+'" fill="#8697A8" font-size="9" text-anchor="'+anchor+'">'+fmtShort(series[i].k)+'</text>';
   container.innerHTML = '<svg class="chart" viewBox="0 0 '+W+' '+H+'">'
-    + '<line x1="'+PL+'" y1="'+(PT+ih)+'" x2="'+(W-PR)+'" y2="'+(PT+ih)+'" stroke="#1C2736"/>'
-    + '<line x1="'+PL+'" y1="'+Y(maxV)+'" x2="'+(W-PR)+'" y2="'+Y(maxV)+'" stroke="#1C2736" stroke-dasharray="3 4"/>'
-    + '<text x="'+PL+'" y="'+(Y(maxV)-4)+'" fill="#55606F" font-size="9" font-family="JetBrains Mono,monospace">'+maxV+'p</text>'
+    + '<line x1="'+PL+'" y1="'+(PT+ih)+'" x2="'+(W-PR)+'" y2="'+(PT+ih)+'" stroke="#DCE3EC"/>'
+    + '<line x1="'+PL+'" y1="'+Y(maxV)+'" x2="'+(W-PR)+'" y2="'+Y(maxV)+'" stroke="#DCE3EC" stroke-dasharray="3 4"/>'
+    + '<text x="'+PL+'" y="'+(Y(maxV)-4)+'" fill="#8697A8" font-size="9">'+maxV+'</text>'
     + '<path d="'+area+'" fill="'+color+'" opacity="0.13"/>'
     + '<path d="'+line+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>'
     + '<circle cx="'+X(n-1)+'" cy="'+Y(last.v)+'" r="3.5" fill="'+color+'"/>'
@@ -992,11 +1080,29 @@ function barChart(container, series, color){
     const h=(s.v/maxV)*(H-PT-PB), x=i*slot+(slot-bw)/2, y=H-PB-h;
     const cur = i===n-1;
     bars += '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw+'" height="'+Math.max(h,1).toFixed(1)+'" rx="4" fill="'+color+'" opacity="'+(cur?1:0.45)+'"/>'
-      + (s.v>0 ? '<text x="'+(x+bw/2)+'" y="'+(y-4)+'" fill="'+(cur?color:'#7C8899')+'" font-size="9" font-weight="700" text-anchor="middle" font-family="JetBrains Mono,monospace">'+s.v+'</text>' : '')
-      + '<text x="'+(x+bw/2)+'" y="'+(H-6)+'" fill="#55606F" font-size="8.5" text-anchor="middle" font-family="JetBrains Mono,monospace">'+s.label+'</text>';
+      + (s.v>0 ? '<text x="'+(x+bw/2)+'" y="'+(y-4)+'" fill="'+(cur?color:'#8697A8')+'" font-size="9" font-weight="700" text-anchor="middle">'+s.v+'</text>' : '')
+      + '<text x="'+(x+bw/2)+'" y="'+(H-6)+'" fill="#8697A8" font-size="8.5" text-anchor="middle">'+s.label+'</text>';
   });
   container.innerHTML = '<svg class="chart" viewBox="0 0 '+W+' '+H+'">'
-    + '<line x1="0" y1="'+(H-PB)+'" x2="'+W+'" y2="'+(H-PB)+'" stroke="#1C2736"/>'+bars+'</svg>';
+    + '<line x1="0" y1="'+(H-PB)+'" x2="'+W+'" y2="'+(H-PB)+'" stroke="#DCE3EC"/>'+bars+'</svg>';
+}
+
+function renderIncome(){
+  if(!$('incVal')) return;
+  $('incVal').value = (S.income && S.income.monthly) || '';
+  const ym=todayKey().slice(0,7), e=monthEconomics(ym);
+  if(!e.income){ $('incSummary').innerHTML='<div class="empty">Completează venitul lunar ca să vezi repartizarea pe proiecte.</div>'; return; }
+  if(!e.rows.length){ $('incSummary').innerHTML='<div class="empty">Nimic livrat luna aceasta.</div>'; return; }
+  $('incSummary').innerHTML = e.rows.map(r=>
+    '<div class="planrow"><span class="pdot" style="background:'+r.p.color+'"></span>'
+    +'<span class="ptitle">'+esc(r.p.name)+'</span>'
+    +'<span class="chip">'+r.share+'%</span>'
+    +'<span class="chip">'+r.tasks+' task</span>'
+    +'<span class="chip pts">'+r.value.toLocaleString('ro-RO')+' '+e.currency+'</span>'
+    +(r.perTask!==null?'<span class="chip" style="color:var(--amber)">'+r.perTask.toLocaleString('ro-RO')+'/task</span>':'')
+    +'</div>').join('')
+    + '<div class="planrow" style="border:none"><span class="ptitle" style="color:var(--muted)">Total '+e.totalHours+' h · '+e.totalTasks+' task-uri</span>'
+    + '<span class="chip pts">'+e.income.toLocaleString('ro-RO')+' '+e.currency+'</span></div>';
 }
 
 function renderEvolutie(){
@@ -1041,13 +1147,13 @@ function renderEvolutie(){
 
   /* ore pe zi — 30 de zile */
   const daily=[]; for(let i=29;i>=0;i--){ const k=addDays(todayKey(),-i); daily.push({k, v:dayHours(k)}); }
-  areaChart($('chDaily'), daily, '#38D3E8');
+  areaChart($('chDaily'), daily, '#17324D');
 
   /* task-uri livrate pe săptămână — 8 săptămâni */
   const weeks=[]; const mon0=mondayOf(todayKey());
   for(let i=7;i>=0;i--){ const m=addDays(mon0,-7*i);
     weeks.push({label:fmtShort(m), v:doneBetween(m, addDays(m,6)).length}); }
-  barChart($('chWeekly'), weeks, '#F0A93B');
+  barChart($('chWeekly'), weeks, '#E2461F');
 
   /* livrare la termen — 6 luni */
   const mo=[]; let c=addMonthsKey(todayKey(),-5);
@@ -1058,14 +1164,14 @@ function renderEvolutie(){
     mo.push({label:MONTHS[hmm-1], v: ot===null?0:ot});
     c=addMonthsKey(c,1);
   }
-  barChart($('chOnTime'), mo, '#4ADE80');
+  barChart($('chOnTime'), mo, '#1F7A52');
 
   /* focus — 7 zile */
   const fdays=[]; for(let i=6;i>=0;i--){ const k=addDays(todayKey(),-i);
     const fs=S.focus.filter(f=>f.day===k && f.valid);
     fdays.push({k, label:WDAYS2[parseKey(k).getDay()], v:fs.reduce((a,f)=>a+f.spent,0), n:fs.length});
   }
-  barChart($('chFocus'), fdays.map(x=>({label:x.label, v:x.v})), '#38D3E8');
+  barChart($('chFocus'), fdays.map(x=>({label:x.label, v:x.v})), '#17324D');
   const wkS=fdays.reduce((a,x)=>a+x.n,0), wkM=fdays.reduce((a,x)=>a+x.v,0);
   const wkDone=S.focus.filter(f=>f.doneTask && f.day>=fdays[0].k && f.day<=todayKey()).length;
   let fx='<div class="bstats" style="border-top:none;padding-top:0;margin-top:2px">'
@@ -1083,7 +1189,7 @@ function renderEvolutie(){
 }
 
 function updateStuck(){
-  for(const id of ['btnFocus','taskFilter']){
+  for(const id of ['btnFocus','projTools']){
     const el=$(id); if(!el) continue;
     const sec=el.closest('section.tab');
     if(sec && !sec.classList.contains('on')){ el.classList.remove('stuck'); continue; }
@@ -1096,6 +1202,7 @@ function updateStuck(){
 function renderAll(){
   renderHeader(); renderAzi(); renderProiecte(); renderLoc(); renderIdei(); renderEvolutie();
   requestAnimationFrame(updateStuck);
+  renderIncome();
   renderNot();
 }
 
@@ -1250,12 +1357,13 @@ function aiContext(){
   const mDone=S.tasks.filter(t=>t.done && t.doneAt && t.doneAt.slice(0,7)===ym);
   const line=t=>{const p=projById(t.pid);
     return '- id:'+t.id+' | "'+t.title+'" | proiect: '+(p?p.name:'fără proiect')
+      +' | stare: '+(STATES[t.state]||STATES.todo).l+(t.state==='blocked'&&t.blockReason?' ('+t.blockReason+')':'')
       +' | prioritate: '+PRIO[t.prio].l
       +(t.due?' | termen: '+t.due+(t.due<today?' (RESTANT de '+daysBetween(t.due,today)+' zile)':t.due===today?' (AZI)':''):' | fără termen')
       +(t.timeS?' | interval '+t.timeS+(t.timeE?'-'+t.timeE:''):'')
       +(t.est?' | estimat '+t.est+'h':'')+(t.hrs?' | lucrat '+t.hrs+'h':'');};
 
-  const projLines=S.projects.map(p=>{
+  const projLines=liveProjects().map(p=>{
     const o=open.filter(t=>t.pid===p.id);
     const dm=mDone.filter(t=>t.pid===p.id);
     let hh=0; for(const t of dm) hh+=t.hrs||0;
@@ -1296,7 +1404,9 @@ const AI_SYS = [
 'Ești asistentul din PUPITRU, aplicația de management de proiecte și timp a lui Nedelcu, inginer de instalații (MEP) și administrator al firmei NED EGR CONSTRUCT INSTAL, care conduce simultan mai multe șantiere în România.',
 '',
 'CUM FUNCȚIONEAZĂ APLICAȚIA:',
-'- Task-urile aparțin unui proiect, au prioritate (Scăzută/Medie/Ridicată), termen limită, opțional interval orar, estimare de ore și ore lucrate.',
+'- Task-urile aparțin unui proiect, au stare (De făcut / În lucru / Blocat, cu motiv / Livrat), prioritate (Scăzută/Medie/Ridicată), termen limită, opțional interval orar, estimare de ore și ore lucrate.',
+'- Proiectele au beneficiar, termen de predare și buget de ore; cele încheiate se arhivează.',
+'- Venitul lunar de la beneficiar se repartizează pe proiecte după ponderea orelor lucrate, iar costul pe task rezultă împărțind valoarea proiectului la task-urile livrate.',
 '- Indicatorii urmăriți sunt: ore lucrate, task-uri livrate, procentul livrat la termen, restanțe. NU există punctaje, stele sau obiceiuri.',
 '- FOCUS: sesiuni cronometrate care adaugă automat minutele la orele task-ului.',
 '- Pontaj: fiecare zi se marchează Birou sau Acasă.',
@@ -1306,6 +1416,7 @@ const AI_SYS = [
 '- Scrie des rapid, fără diacritice și cu prescurtări („fac o comparativa de pret la aveuro", „am inchis maf-ul de la hella"). Potrivește denumirile de proiecte ignorând diacriticele și majusculele.',
 '- Dacă spune ce lucrează, ce are de făcut sau ce i s-a cerut → acțiune "create".',
 '- Dacă spune că a terminat, a trimis, a predat sau a închis ceva → acțiune "complete", cu id-ul exact din lista de task-uri când îl recunoști.',
+'- Dacă spune că a început ceva sau că e blocat pe ceva („aștept oferta de la Hoval", „stau după aviz") → acțiune "state" cu doing sau blocked și motivul.',
 '- Poate da mai multe comenzi într-un singur mesaj → returnezi mai multe acțiuni.',
 '- Dacă întreabă ceva (situație, plan, sfat) → doar "reply", fără acțiuni.',
 '- Dacă nu ești sigur de proiect, alegi cel mai probabil din listă și spui în reply ce ai ales, ca să poată corecta.',
@@ -1334,7 +1445,8 @@ const AI_SYS = [
 'FORMAT OBLIGATORIU: răspunzi EXCLUSIV cu un obiect JSON valid, fără text în afara lui, fără blocuri markdown:',
 '{"reply":"mesajul pentru utilizator, cu rânduri separate prin \\n","actions":[...],"memory":["fapte de reținut"]}',
 'Acțiuni permise:',
-'{"type":"create","title":"...","project":"nume exact din listă","prio":1|2|3,"due":"AAAA-LL-ZZ","time":"HH:MM","hours":estimare_ore}',
+'{"type":"create","title":"...","project":"nume exact din listă","prio":1|2|3,"due":"AAAA-LL-ZZ","time":"HH:MM","hours":estimare_ore,"state":"todo|doing|blocked","blockReason":"motiv, doar dacă e blocat"}',
+'{"type":"state","id":"id-ul task-ului","state":"doing|blocked|todo","blockReason":"motiv"}',
 '{"type":"complete","id":"id-ul task-ului din listă","title":"denumirea","project":"nume proiect","hours":ore_lucrate}',
 '',
 'REGULI:',
@@ -1361,17 +1473,27 @@ function aiFindTask(title, projName){
   return bestScore>=30 ? best : null;
 }
 function aiProj(name){
-  if(!name) return S.projects[0];
+  if(!name) return liveProjects()[0] || S.projects[0];
   const n=name.toLowerCase();
-  return S.projects.find(p=>p.name.toLowerCase().includes(n)||n.includes(p.name.toLowerCase())) || S.projects[0];
+  const live=liveProjects();
+  return live.find(p=>p.name.toLowerCase().includes(n)||n.includes(p.name.toLowerCase())) || live[0] || S.projects[0];
 }
 async function aiApply(actions){
   const log=[];
   for(const a of (actions||[])){
-    if(a.type==='create'){
+    if(a.type==='state'){
+      const t=(a.id && S.tasks.find(x=>x.id===a.id)) || aiFindTask(a.title, a.project);
+      if(t && !t.done){
+        t.state=['todo','doing','blocked'].includes(a.state)?a.state:'doing';
+        t.blockReason = t.state==='blocked' ? (a.blockReason||t.blockReason||null) : null;
+        log.push('↻ '+t.title+' → '+STATES[t.state].l+(t.blockReason?' ('+t.blockReason+')':''));
+      }
+    } else if(a.type==='create'){
       const p=aiProj(a.project);
       const tm=(a.time&&/^\d{1,2}:\d{2}$/.test(a.time)) ? (a.time.length===4?'0'+a.time:a.time) : null;
       S.tasks.push({id:uid(), pid:p?p.id:null, title:a.title, prio:[1,2,3].includes(a.prio)?a.prio:2,
+        state:['todo','doing','blocked'].includes(a.state)?a.state:'todo',
+        blockReason:a.state==='blocked'?(a.blockReason||null):null,
         due:a.due||todayKey(), rec:null, timeS:tm, timeE:null,
         hrs:null, est:(+a.hours)||null, done:false, doneAt:null, planned:null, triagedOn:null, nagAt:null, createdAt:todayKey()});
       log.push('+ Creat: '+a.title+' · '+(p?p.name:'—')+(a.due?' · '+fmtShort(a.due):'')+(tm?' · '+tm:'')+((+a.hours)?' · estimat '+(+a.hours)+'h':''));
@@ -1400,7 +1522,8 @@ async function callGemini(sys, msgs){
   const schema={type:'OBJECT', properties:{
     reply:{type:'STRING'},
     actions:{type:'ARRAY', items:{type:'OBJECT', properties:{
-      type:{type:'STRING', enum:['create','complete']},
+      type:{type:'STRING', enum:['create','complete','state']},
+      state:{type:'STRING'}, blockReason:{type:'STRING'},
       id:{type:'STRING'}, title:{type:'STRING'}, project:{type:'STRING'},
       prio:{type:'INTEGER'}, due:{type:'STRING'}, time:{type:'STRING'}, hours:{type:'NUMBER'}
     }, required:['type','title']}},
@@ -1544,7 +1667,7 @@ function openFocus(){
   const open = S.tasks.filter(t=>!t.done).sort(sortForToday).slice(0,8);
   $('ffList').innerHTML = open.length ? open.map(t=>{
     const p=projById(t.pid);
-    return '<div class="fopt" data-id="'+t.id+'"><span class="pdot" style="background:'+(p?p.color:'#55606F')+'"></span>'
+    return '<div class="fopt" data-id="'+t.id+'"><span class="pdot" style="background:'+(p?p.color:'#95A2A8')+'"></span>'
       + '<span class="ptitle">'+esc(t.title)+'</span></div>';
   }).join('') : '<div class="empty">Niciun task activ — scrie unul mai sus.</div>';
   document.querySelectorAll('#ffList .fopt').forEach(r=>r.addEventListener('click',()=>{
@@ -1634,10 +1757,16 @@ function closeSheets(){
 
 /* ---------- Task modal ---------- */
 function fillProjSelect(sel){
-  $('tfProj').innerHTML = S.projects.map(p=>'<option value="'+p.id+'"'+(p.id===sel?' selected':'')+'>'+esc(p.name)+'</option>').join('');
+  const opts=S.projects.filter(p=>!p.archived || p.id===sel);
+  $('tfProj').innerHTML = opts.map(p=>'<option value="'+p.id+'"'+(p.id===sel?' selected':'')+'>'+esc(p.name)+'</option>').join('');
 }
 function setPrio(v){ tfState.prio=v; document.querySelectorAll('#tfPrio button').forEach(b=>b.classList.toggle('on', +b.dataset.v===v)); }
 function setRec(v){ tfState.rec=v; document.querySelectorAll('#tfRec button').forEach(b=>b.classList.toggle('on', b.dataset.v===v)); }
+function setState(v){
+  tfState.state=v;
+  document.querySelectorAll('#tfState button').forEach(b=>b.classList.toggle('on', b.dataset.v===v));
+  $('tfBlockWrap').style.display = v==='blocked' ? 'block' : 'none';
+}
 function openTaskModal(taskId, presetPid){
   if(!S.projects.length){ S.projects.push({id:uid(),name:'General',color:PROJ_COLORS[0]}); }
   editTaskId = taskId||null;
@@ -1646,6 +1775,8 @@ function openTaskModal(taskId, presetPid){
   $('tfTitle').value = t ? t.title : '';
   fillProjSelect(t ? t.pid : (presetPid || S.projects[0].id));
   setPrio(t ? t.prio : 2); setRec(t && t.rec ? t.rec : '');
+  setState(t && t.state && t.state!=='done' ? t.state : 'todo');
+  $('tfBlock').value = t && t.blockReason ? t.blockReason : '';
   $('tfDue').value = t && t.due ? t.due : '';
   $('tfTimeS').value = t && t.timeS ? t.timeS : '';
   $('tfTimeE').value = t && t.timeE ? t.timeE : '';
@@ -1659,7 +1790,7 @@ function openTaskModal(taskId, presetPid){
 async function saveTask(){
   const title = $('tfTitle').value.trim();
   if(!title){ $('tfTitle').focus(); return; }
-  const data = { title, pid:$('tfProj').value, prio:tfState.prio, due:$('tfDue').value||null, rec:tfState.rec||null, timeS:$('tfTimeS').value||null, timeE:$('tfTimeE').value||null, hrs:parseFloat($('tfHrs').value)||null };
+  const data = { title, pid:$('tfProj').value, prio:tfState.prio, state:tfState.state, blockReason:(tfState.state==='blocked'?($('tfBlock').value.trim()||null):null), due:$('tfDue').value||null, rec:tfState.rec||null, timeS:$('tfTimeS').value||null, timeE:$('tfTimeE').value||null, hrs:parseFloat($('tfHrs').value)||null };
   if(editTaskId){
     const tk = S.tasks.find(x=>x.id===editTaskId);
     Object.assign(tk, data);
@@ -1688,6 +1819,8 @@ let editProjId=null, peColor=PROJ_COLORS[0];
 function openProjEdit(pid){
   const p=projById(pid); if(!p) return;
   editProjId=pid; $('peName').value=p.name; peColor=p.color;
+  $('peClient').value=p.client||''; $('peDeadline').value=p.deadline||''; $('peBudget').value=p.budget||'';
+  $('peArchive').textContent = p.archived ? 'Dezarhivează' : 'Arhivează';
   $('peColors').innerHTML=PROJ_COLORS.map(c=>'<button class="sw'+(c===peColor?' on':'')+'" data-c="'+c+'" style="background:'+c+'"></button>').join('');
   document.querySelectorAll('#peColors .sw').forEach(b=>b.addEventListener('click',()=>{
     peColor=b.dataset.c;
@@ -1712,14 +1845,14 @@ const REPORT_CSS = `
 body{margin:0;padding:16px;background:#fff;color:#111;
   font-family:"Arial Nova","Arial Nova Light",Arial,Helvetica,sans-serif;
   -webkit-print-color-adjust:exact;print-color-adjust:exact}
-h1{font-size:20px;margin:0 0 2px;color:#0E7A8C}
-.prsub{color:#666;font-size:11px;margin:0 0 14px;border-bottom:2px solid #0E7A8C;padding-bottom:8px}
-h3{font-size:13px;margin:16px 0 5px;padding:4px 8px;color:#111;background:#F1F5F7;
-  border-left:5px solid #0E7A8C;border-radius:3px}
+h1{font-size:20px;margin:0 0 2px;color:#17324D}
+.prsub{color:#666;font-size:11px;margin:0 0 14px;border-bottom:2px solid #17324D;padding-bottom:8px}
+h3{font-size:13px;margin:16px 0 5px;padding:4px 8px;color:#111;background:#F4F6F9;
+  border-left:5px solid #E2461F;border-radius:3px}
 h3 span{float:right;font-weight:400;font-size:11px;color:#444}
 table{width:100%;border-collapse:collapse;font-size:11px;page-break-inside:auto}
 tr{page-break-inside:avoid}
-th{text-align:left;color:#0E7A8C;font-weight:700;padding:4px;border-bottom:1.2px solid #0E7A8C}
+th{text-align:left;color:#17324D;font-weight:700;padding:4px;border-bottom:1.2px solid #17324D}
 td{padding:4px;border-bottom:0.5px solid #ccc;vertical-align:top}
 tbody tr:nth-child(even) td{background:#FAFBFC}
 td.hh,th.hh{white-space:nowrap;text-align:right;min-width:52px}
@@ -1733,9 +1866,9 @@ svg{width:100%;height:auto}
 .prloc span.o{background:#ddd;border-color:#333}
 .prloc span.h{background:#f4f4f4}
 .prtotal{margin-top:16px;font-size:13px;border-top:2px solid #000;padding-top:8px}
-.prbadge{display:inline-block;background:#0E7A8C;color:#fff;font-size:11px;font-weight:700;
+.prbadge{display:inline-block;background:#17324D;color:#fff;font-size:11px;font-weight:700;
   padding:3px 9px;border-radius:11px;margin-left:6px}
-.prfoot{margin-top:26px;padding-top:10px;border-top:1.5px solid #0E7A8C;font-size:11.5px;
+.prfoot{margin-top:26px;padding-top:10px;border-top:1.5px solid #17324D;font-size:11.5px;
   display:flex;justify-content:space-between;page-break-inside:avoid}
 .prfoot b{font-size:12.5px;letter-spacing:.02em}
 .prhint{margin:0 0 14px;padding:10px 12px;background:#FFF6E5;border:1px solid #F0C071;border-radius:6px;
@@ -1795,8 +1928,9 @@ function openReport(){
     cur=addMonthsKey(cur,-1);
   }
   $('rpMonth').innerHTML=opts.join('');
-  rpSel = new Set(S.projects.map(p=>p.id));
-  $('rpProjs').innerHTML = S.projects.map(p=>'<div class="fopt sel" data-id="'+p.id+'"><span class="pdot" style="background:'+p.color+'"></span><span class="ptitle">'+esc(p.name)+'</span></div>').join('');
+  const rpList=S.projects.filter(p=>!p.archived || S.tasks.some(t=>t.pid===p.id && t.done));
+  rpSel = new Set(rpList.map(p=>p.id));
+  $('rpProjs').innerHTML = rpList.map(p=>'<div class="fopt sel" data-id="'+p.id+'"><span class="pdot" style="background:'+p.color+'"></span><span class="ptitle">'+esc(p.name)+'</span></div>').join('');
   document.querySelectorAll('#rpProjs .fopt').forEach(r=>r.addEventListener('click',()=>{
     const id=r.dataset.id;
     if(rpSel.has(id)){ rpSel.delete(id); r.classList.remove('sel'); }
@@ -1926,10 +2060,26 @@ function buildReport(ym){
       +'<div class="prlegend">B = birou (zilele '+(zo.join(', ')||'—')+') · A = acasă (zilele '+(zh.join(', ')||'—')+')</div></div>';
   }
 
+  /* --- repartizarea venitului pe proiecte --- */
+  let econ='';
+  const ec=monthEconomics(ym);
+  if(ec.income && ec.rows.length){
+    const sel=ec.rows.filter(r=>rpSel.has(r.p.id));
+    if(sel.length){
+      econ='<div class="chartblock"><h3>Repartizarea lunară <span>'+ec.income.toLocaleString('ro-RO')+' '+ec.currency+' · '+ec.totalHours+' h · '+ec.totalTasks+' task-uri</span></h3>'
+        +'<table><thead><tr><th>Proiect</th><th class="hh">Ore</th><th class="hh">Pondere</th><th class="hh">Task-uri</th><th class="hh">Valoare</th><th class="hh">Cost/task</th></tr></thead><tbody>'
+        + sel.map(r=>'<tr><td>'+esc(r.p.name)+'</td><td class="hh">'+r.hours+'&nbsp;h</td><td class="hh">'+r.share+'%</td>'
+            +'<td class="hh">'+r.tasks+'</td><td class="hh">'+r.value.toLocaleString('ro-RO')+'</td>'
+            +'<td class="hh">'+(r.perTask!==null?r.perTask.toLocaleString('ro-RO'):'—')+'</td></tr>').join('')
+        +'</tbody></table>'
+        +'<div class="prlegend">Ponderea se calculează din orele lucrate în lună; valoarea este partea din venitul lunar aferentă proiectului, iar costul pe task rezultă prin împărțirea valorii la numărul de task-uri livrate.</div></div>';
+    }
+  }
+
   $('printArea').innerHTML =
     '<h1>Raport activitate — '+MONTHS[m-1]+' '+y+'</h1>'
     +'<p class="prsub">PUPITRU · generat la '+fmtShort(todayKey())+' '+todayKey().slice(0,4)+'</p>'
-    +bars+loc
+    +bars+econ+loc
     +(rows||'<p>Niciun task finalizat în această lună pentru proiectele selectate.</p>')
     +chP+chD
     +'<div class="prtotal"><b>Total: '+totalN+' task-uri finalizate'
@@ -1969,7 +2119,7 @@ document.addEventListener('click', async (ev)=>{
   if(act==='toggle'){
     const id = el.closest('.task').dataset.id;
     const t = S.tasks.find(x=>x.id===id);
-    t.done = !t.done; t.doneAt = t.done ? todayKey() : null;
+    t.done = !t.done; t.doneAt = t.done ? todayKey() : null; t.state = t.done ? 'done' : 'todo';
     if(t.done && t.rec) spawnRec(t);
     await saveState(); renderAll(); return;
   }
@@ -2007,6 +2157,7 @@ function bind(){
   $('fab').addEventListener('click', ()=>openTaskModal(null,null));
   $('ovl').addEventListener('click', closeSheets);
 
+  $('taskSearch').addEventListener('input', ()=>{ searchQuery=$('taskSearch').value; renderProiecte(); });
   document.querySelectorAll('#taskFilter button').forEach(b=>b.addEventListener('click', ()=>{
     filterMode=b.dataset.f;
     document.querySelectorAll('#taskFilter button').forEach(x=>x.classList.toggle('on',x===b));
@@ -2088,6 +2239,7 @@ function bind(){
   });
 
   document.querySelectorAll('#tfRec button').forEach(b=>b.addEventListener('click',()=>setRec(b.dataset.v)));
+  document.querySelectorAll('#tfState button').forEach(b=>b.addEventListener('click',()=>setState(b.dataset.v)));
 
   /* focus */
   $('btnFocus').addEventListener('click', openFocus);
@@ -2107,7 +2259,16 @@ function bind(){
   $('peDown').addEventListener('click', ()=>moveProj(1));
   $('peSave').addEventListener('click', async ()=>{
     const p=projById(editProjId); if(!p) return;
-    const n=$('peName').value.trim(); if(n) p.name=n; p.color=peColor;
+    const n=$('peName').value.trim(); if(n) p.name=n;
+    p.color=peColor;
+    p.client=$('peClient').value.trim()||null;
+    p.deadline=$('peDeadline').value||null;
+    p.budget=parseFloat($('peBudget').value)||null;
+    closeSheets(); await saveState(); renderAll();
+  });
+  $('peArchive').addEventListener('click', async ()=>{
+    const p=projById(editProjId); if(!p) return;
+    p.archived=!p.archived;
     closeSheets(); await saveState(); renderAll();
   });
   $('peDelete').addEventListener('click', async ()=>{
@@ -2162,6 +2323,14 @@ function bind(){
     await saveState();
     $('aiKeyWrap').style.display='none';
     aiStatus('Setare salvată. Scrie din nou mesajul.');
+  });
+
+  /* venit lunar */
+  $('incSave').addEventListener('click', async ()=>{
+    S.income = S.income||{currency:'lei'};
+    S.income.monthly = parseFloat($('incVal').value)||null;
+    await saveState(); renderIncome();
+    $('incSave').textContent='✓'; setTimeout(()=>$('incSave').textContent='Salvează',1500);
   });
 
   /* notificări */

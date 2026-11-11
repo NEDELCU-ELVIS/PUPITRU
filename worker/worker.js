@@ -163,6 +163,28 @@ export default {
       return json({ ok: res.ok, status: res.status });
     }
 
+    /* raport: primește HTML-ul și îl servește ca pagină, ca să poată fi imprimat din Safari */
+    if (url.pathname === '/api/report' && request.method === 'POST') {
+      const data = await request.json();
+      if (!data.html || typeof data.html !== 'string') return json({ error: 'raport lipsă' }, 400);
+      if (data.html.length > 2000000) return json({ error: 'raport prea mare' }, 413);
+      const id = bytesToB64url(crypto.getRandomValues(new Uint8Array(12)));
+      await env.PUSH_KV.put('r:' + id, data.html, { expirationTtl: 60 * 60 * 6 });
+      return json({ ok: true, url: url.origin + '/r/' + id });
+    }
+
+    if (url.pathname.startsWith('/r/') && request.method === 'GET') {
+      const id = url.pathname.slice(3);
+      const html = await env.PUSH_KV.get('r:' + id);
+      if (!html) return new Response('Raportul a expirat. Generează-l din nou din aplicație.', {
+        status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+      return new Response(html, { headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'Cache-Control': 'no-store',
+        'X-Robots-Tag': 'noindex, nofollow'
+      }});
+    }
+
     if (url.pathname === '/api/unsubscribe' && request.method === 'POST') {
       const data = await request.json();
       if (data.sub && data.sub.endpoint) await env.PUSH_KV.delete(await deviceKey(data.sub.endpoint));

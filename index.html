@@ -499,7 +499,7 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
       <div class="sub" id="notNext" style="font-size:11.5px;margin-top:-4px"></div>
       <button class="btn small" id="notOff" style="margin-top:12px">Oprește notificările</button>
     </div>
-    <button class="btn wide" id="btnReport" style="margin-bottom:8px">Raport lunar (PDF)</button>
+    <button class="btn wide" id="btnReport" style="margin-bottom:8px">Raport lunar</button>
     <div class="rowflex"><button class="btn" id="btnBackup">Copiază backup</button><button class="btn" id="btnRestore">Importă backup</button></div>
   </section>
 </main>
@@ -656,8 +656,8 @@ body.lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
   <h3>Raport lunar</h3>
   <div class="field"><label>Luna</label><select id="rpMonth"></select></div>
   <div class="field"><label>Proiecte incluse (atinge pentru a exclude)</label><div id="rpProjs"></div></div>
-  <button class="btn pri wide" id="rpGen">Generează PDF</button>
-  <div class="sub" style="margin-top:10px">Se deschide fereastra de imprimare — de acolo: Partajare → Salvează ca PDF.</div>
+  <button class="btn pri wide" id="rpGen">Deschide raportul</button>
+  <div class="sub" style="margin-top:10px">Raportul se deschide ca pagină separată. Acolo: Partajare → Imprimare → Salvează în Fișiere, pentru PDF.</div>
 </div>
 
 <div id="printArea"></div>
@@ -1702,7 +1702,90 @@ async function moveProj(dir){
   await saveState(); renderProiecte();
 }
 
-/* ---------- Raport lunar (PDF prin imprimare) ---------- */
+/* ---------- Deschiderea raportului pentru imprimare ----------
+   iOS nu permite imprimarea din aplicația de pe ecranul principal, așa că
+   raportul se deschide ca pagină obișnuită (în Safari), de unde merge
+   Partajare → Imprimare → Salvează ca PDF. */
+const REPORT_CSS = `
+@page{margin:12mm 10mm}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;background:#fff;color:#111;
+  font-family:"Arial Nova","Arial Nova Light",Arial,Helvetica,sans-serif;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+h1{font-size:20px;margin:0 0 2px;color:#0E7A8C}
+.prsub{color:#666;font-size:11px;margin:0 0 14px;border-bottom:2px solid #0E7A8C;padding-bottom:8px}
+h3{font-size:13px;margin:16px 0 5px;padding:4px 8px;color:#111;background:#F1F5F7;
+  border-left:5px solid #0E7A8C;border-radius:3px}
+h3 span{float:right;font-weight:400;font-size:11px;color:#444}
+table{width:100%;border-collapse:collapse;font-size:11px;page-break-inside:auto}
+tr{page-break-inside:avoid}
+th{text-align:left;color:#0E7A8C;font-weight:700;padding:4px;border-bottom:1.2px solid #0E7A8C}
+td{padding:4px;border-bottom:0.5px solid #ccc;vertical-align:top}
+tbody tr:nth-child(even) td{background:#FAFBFC}
+td.hh,th.hh{white-space:nowrap;text-align:right;min-width:52px}
+.chartblock{margin:10px 0 18px;page-break-inside:avoid}
+svg{width:100%;height:auto}
+.prlegend{font-size:10px;color:#555;margin-top:2px}
+.prloc{display:flex;flex-wrap:wrap;gap:3px;margin:6px 0 4px}
+.prloc span{width:26px;height:24px;border:0.8px solid #999;border-radius:4px;font-size:9px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+.prloc span b{font-size:10px}
+.prloc span.o{background:#ddd;border-color:#333}
+.prloc span.h{background:#f4f4f4}
+.prtotal{margin-top:16px;font-size:13px;border-top:2px solid #000;padding-top:8px}
+.prbadge{display:inline-block;background:#0E7A8C;color:#fff;font-size:11px;font-weight:700;
+  padding:3px 9px;border-radius:11px;margin-left:6px}
+.prfoot{margin-top:26px;padding-top:10px;border-top:1.5px solid #0E7A8C;font-size:11.5px;
+  display:flex;justify-content:space-between;page-break-inside:avoid}
+.prfoot b{font-size:12.5px;letter-spacing:.02em}
+.prhint{margin:0 0 14px;padding:10px 12px;background:#FFF6E5;border:1px solid #F0C071;border-radius:6px;
+  font-size:12px;color:#5A4414}
+@media print{.prhint{display:none}}
+`;
+
+function reportDocument(ym){
+  const [y,m]=ym.split('-').map(Number);
+  return '<!doctype html><html lang="ro"><head><meta charset="utf-8">'
+    +'<meta name="viewport" content="width=device-width, initial-scale=1">'
+    +'<title>Raport '+MONTHS[m-1]+' '+y+' — NED EGR</title>'
+    +'<style>'+REPORT_CSS+'</style></head><body>'
+    +'<p class="prhint"><b>Pentru PDF:</b> Partajare (pătratul cu săgeată) → Imprimare → '
+    +'apoi Partajare din fereastra de imprimare → Salvează în Fișiere.</p>'
+    +$('printArea').innerHTML
+    +'</body></html>';
+}
+
+async function openReportPage(ym){
+  buildReport(ym);
+  const html=reportDocument(ym);
+
+  /* în Safari obișnuit, imprimarea directă funcționează */
+  if(!isStandalone()){ window.print(); return; }
+
+  const P=S.push||{};
+  if(P.url){
+    try{
+      const res=await fetch(P.url.replace(/\/+$/,'')+'/api/report',{method:'POST',
+        headers:{'Content-Type':'application/json'}, body:JSON.stringify({html})});
+      const j=await res.json();
+      if(j && j.url){ window.open(j.url,'_blank'); return; }
+      throw new Error(j && j.error ? j.error : 'răspuns neașteptat');
+    }catch(e){ /* trecem pe varianta locală */ }
+  }
+
+  /* fără serviciu: salvăm fișierul, se imprimă din Fișiere */
+  try{
+    const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='Raport-'+ym+'-NED-EGR.html';
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+    alert('Raportul a fost salvat în Fișiere. Deschide-l de acolo, apoi Partajare → Imprimare → Salvează ca PDF.');
+  }catch(e){ alert('Raportul nu a putut fi deschis: '+e.message); }
+}
+
+/* ---------- Raport lunar ---------- */
 let rpSel = new Set();
 function openReport(){
   const opts=[]; let cur=todayKey();
@@ -2037,14 +2120,13 @@ function bind(){
   });
   /* raport lunar */
   $('btnReport').addEventListener('click', openReport);
-  $('rpGen').addEventListener('click', ()=>{
-    /* construim raportul și imprimăm în același gest al utilizatorului:
-       Safari blochează window.print() dacă apelul vine prea târziu după atingere */
-    try{ buildReport($('rpMonth').value); }
-    catch(e){ notStatus && null; alert('Raportul nu a putut fi construit: '+e.message); return; }
-    document.body.classList.remove('lock');
-    document.body.style.top='';
-    window.print();
+  $('rpGen').addEventListener('click', async ()=>{
+    const ym=$('rpMonth').value;
+    const btn=$('rpGen'); btn.textContent='Se pregătește…';
+    document.body.classList.remove('lock'); document.body.style.top='';
+    try{ await openReportPage(ym); }
+    catch(e){ alert('Raportul nu a putut fi generat: '+e.message); }
+    btn.textContent='Deschide raportul';
     closeSheets();
   });
   /* glisare pentru închidere */

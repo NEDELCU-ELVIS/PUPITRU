@@ -1,4 +1,4 @@
-const CACHE = 'pupitru-v2';
+const CACHE = 'pupitru-v3';
 const SHELL = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -28,4 +28,35 @@ self.addEventListener('fetch', e => {
       return res;
     }))
   );
+});
+
+
+/* ---------- Notificări push ---------- */
+self.addEventListener('push', e => {
+  let d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (err) { d = { title: 'PUPITRU', body: e.data ? e.data.text() : '' }; }
+  const opts = {
+    body: d.body || '',
+    tag: d.tag || 'pupitru',
+    renotify: true,
+    data: { url: d.url || './index.html' },
+    icon: './icon-192.png',
+    badge: './icon-192.png'
+  };
+  e.waitUntil((async () => {
+    await self.registration.showNotification(d.title || 'PUPITRU', opts);
+    if (typeof d.badge === 'number' && self.navigator && self.navigator.setAppBadge) {
+      try { d.badge > 0 ? await self.navigator.setAppBadge(d.badge) : await self.navigator.clearAppBadge(); } catch (err) {}
+    }
+  })());
+});
+
+self.addEventListener('notificationclick', e => {
+  e.notification.close();
+  const target = (e.notification.data && e.notification.data.url) || './index.html';
+  e.waitUntil((async () => {
+    const all = await clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const c of all) { if (c.url.includes('index.html') || c.url.endsWith('/')) { await c.focus(); return; } }
+    await clients.openWindow(target);
+  })());
 });

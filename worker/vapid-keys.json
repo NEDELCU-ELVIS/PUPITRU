@@ -1,0 +1,10 @@
+{
+  "public": "BMLEh8pGW5WdIqFxoZJQd1blE38oCvh5Im1QTyNdjiPWyg086hDYCXE5DS9lEaSA3kJPmM8xQDCviDc4ntjQE60",
+  "private": {
+    "kty": "EC",
+    "crv": "P-256",
+    "d": "8Ssm7Ohhn1z70Ojvg0l7UPxQeLo24kTnhp9a3LxjgnY",
+    "x": "wsSHykZblZ0ioXGhklB3VuUTfygK-HkibVBPI12OI9Y",
+    "y": "yg086hDYCXE5DS9lEaSA3kJPmM8xQDCviDc4ntjQE60"
+  }
+}

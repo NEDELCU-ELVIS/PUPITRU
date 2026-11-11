@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#07090D"/>
+  <circle cx="256" cy="256" r="186" fill="none" stroke="#1B2029" stroke-width="26"/>
+  <path d="M 256 70 A 186 186 0 1 1 70 256" fill="none" stroke="#38D3E8" stroke-width="26" stroke-linecap="round"/>
+
+  <g transform="translate(248 266) scale(1.07)">
+    <!-- calota -->
+    <path d="M -94 28
+             C -94 -32 -56 -78 2 -78
+             C 60 -78 96 -34 96 28 Z" fill="#FFFFFF"/>
+    <!-- nervura centrală și cele laterale -->
+    <path d="M 2 -76 C -6 -42 -8 -6 -7 26" fill="none" stroke="#07090D" stroke-width="11" stroke-linecap="round"/>
+    <path d="M -54 26 C -57 -6 -48 -36 -33 -56" fill="none" stroke="#07090D" stroke-width="8" stroke-linecap="round"/>
+    <path d="M  46 26 C  50 -6  43 -34  30 -54" fill="none" stroke="#07090D" stroke-width="8" stroke-linecap="round"/>
+    <!-- bor: scurt în spate, cozoroc lung în față -->
+    <path d="M -100 24
+             C -84 15 58 9 140 28
+             C 153 31 152 47 138 49
+             C 54 58 -84 54 -102 43
+             C -112 38 -110 28 -100 24 Z" fill="#FFFFFF"/>
+    <!-- separarea calotă / bor -->
+    <path d="M -92 27 C -42 17 48 17 94 26" fill="none" stroke="#07090D" stroke-width="7" stroke-linecap="round"/>
+  </g>
+</svg>
